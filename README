@@ -3,11 +3,15 @@ excuse the mess, this is a new project and we are trying to get everything in or
 will be setting up a project site, forum, and issue tracker.  This will be an active open 
 source project and backed by a company.  We have big plans for this library.
 
+Please feel free to contact one of the contributors if you have any questions as we get 
+everything situated.
+
 == A little disclaimer
 
 	Ottoman at it's current state is pre-alpha software and still under heavy development. 
 	Please be aware that important areas such as the public API may see backwards 
-	incompatible changes between versions.
+	incompatible changes between versions.  We will do our best to keep this from happening 
+	and the decision to make a breaking change will not be taken lightly.
 
 == Repository Organization
 
@@ -15,6 +19,56 @@ source project and backed by a company.  We have big plans for this library.
 	will help in understanding our development process when it comes to Git.
 
 		* http://nvie.com/git-model
+
+== Roadmap
+
+	We want to go ahead and share the goals of the project and provide the features that 
+	Ottoman will include.  Some of these features are already done, we just haven't pushed them 
+	up yet.  Once I get to the first iteration, the development branch will include the features 
+	for the next iteration as they are completed.
+		
+	Here are the features of Ottoman being developed:
+		
+		* Automatic serializing/deserialing of your entities.  Conventions will be used over 
+		  configuration for saving/loading of entities.  Of course, you will be able 
+		  to override these conventions by supplying your own.  For example, the convention 
+		  will be to use the property name Id on your entities.  You will be able to override 
+		  this convention by specifying another name of the property if it differs from the 
+		  default convention.
+		
+		* Using the unit of work pattern and using the document revisions feature of CouchDB.  
+		  Ottoman will be able to detect changed entities and batch the changes up into one 
+		  request.  This will cut down on the chatter between your application and CouchDB.
+		
+		* Maps RESTful HTTP error codes returned from CouchDB to meaningful exceptions.
+		
+		* Specify an Id generator to use for your entities.  The default convention will be 
+		  a Guid generator.  We will also include a Hi/Lo generator.
+		
+		* Seamless integration, no inheriting and overriding of our objects, allowing better 
+		  separation of your domain and it's persistence store.
+		
+		* LINQ support for querying your views/design documents inside of CouchDB.  We will 
+		  not be supporting temporary views, since they do not perform well.  Temporary views 
+		  are mainly used for prototyping a design document.
+		
+		* Ottoman will be Mono 2.8 and .NET 4.0 compatible.
+	
+	Here's a gist to give you an idea of what the API will look like:
+	
+		* http://gist.github.com/440871
+	
+	The first iteration will include everything needed to store, retrieve, and delete documents.
+	
+	The second iteration will include everything needed to query your views/design documents 
+	inside of CouchDB with LINQ.
+	
+	The third iteration will include everything to store, retrieve, and delete document 
+	attachments.  This will also be the first alpha.
+	
+	Further iterations will include deleting, replicating, and compacting databases.  Basically 
+	server and database administration through Ottoman.  At which point we will reach a Beta 
+	period until the final 1.0 release.
 
 == References
 

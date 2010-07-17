@@ -1,1 +1,61 @@
-<?xml version="1.0" encoding="utf-8"?><Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">  <PropertyGroup>    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>    <ProductVersion>10.0.0</ProductVersion>    <SchemaVersion>2.0</SchemaVersion>    <ProjectGuid>{34BD81C0-3B86-47C5-9D31-1C35E6CABC6A}</ProjectGuid>    <OutputType>Library</OutputType>    <RootNamespace>SineSignal.Ottoman.Specs</RootNamespace>    <AssemblyName>SineSignal.Ottoman.Specs</AssemblyName>    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>  </PropertyGroup>  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">    <DebugSymbols>true</DebugSymbols>    <DebugType>full</DebugType>    <Optimize>false</Optimize>    <OutputPath>bin\Debug</OutputPath>    <DefineConstants>DEBUG</DefineConstants>    <ErrorReport>prompt</ErrorReport>    <WarningLevel>4</WarningLevel>    <ConsolePause>false</ConsolePause>  </PropertyGroup>  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">    <DebugType>none</DebugType>    <Optimize>false</Optimize>    <OutputPath>bin\Release</OutputPath>    <ErrorReport>prompt</ErrorReport>    <WarningLevel>4</WarningLevel>    <ConsolePause>false</ConsolePause>  </PropertyGroup>  <ItemGroup>    <Compile Include="AssemblyInfo.cs" />  </ItemGroup>  <ItemGroup>    <ProjectReference Include="..\SineSignal.Ottoman\SineSignal.Ottoman.csproj">      <Project>{DFB82EC8-2D77-461A-92D6-B4024E8812FA}</Project>      <Name>SineSignal.Ottoman</Name>    </ProjectReference>  </ItemGroup>  <ItemGroup>    <Reference Include="System" />    <Reference Include="System.Core" />  </ItemGroup>  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" /></Project>
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{34BD81C0-3B86-47C5-9D31-1C35E6CABC6A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SineSignal.Ottoman.Specs</RootNamespace>
+    <AssemblyName>SineSignal.Ottoman.Specs</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Framework\BaseConcern.cs" />
+    <Compile Include="Framework\ConcernFor.cs" />
+    <Compile Include="Framework\FakeAdaptor.cs" />
+    <Compile Include="Framework\StaticConcern.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SineSignal.Ottoman\SineSignal.Ottoman.csproj">
+      <Project>{DFB82EC8-2D77-461A-92D6-B4024E8812FA}</Project>
+      <Name>SineSignal.Ottoman</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="nunit.framework, Version=2.5.5.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\tools\nunit\framework\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\tools\rhinomocks\Rhino.Mocks.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Framework\" />
+  </ItemGroup>
+</Project>

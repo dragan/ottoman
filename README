@@ -1,20 +1,32 @@
-== Ottoman
+Ottoman is intended to be an easy to use CouchDB API for Mono/.NET applications.  Please 
+excuse the mess, this is a new project and we are trying to get everything in order.  We 
+will be setting up a project site, forum, and issue tracker.  This will be an active open 
+source project and backed by a company.  We have big plans for this library.
 
-Ottoman is intended to be an easy to use open source library for Mono/.NET applications 
-using CouchDB for persistence.  Please excuse the mess, this is a new project and we are 
-trying to get everything in order.  We will be setting up a project site, forum, and issue 
-tracker.  This will be an active open source project and backed by a company.  We have big 
-plans for this library.
+== A little disclaimer
 
-A little disclaimer:
+	Ottoman at it's current state is pre-alpha software and still under heavy development. 
+	Please be aware that important areas such as the public API may see backwards 
+	incompatible changes between versions.
 
-Ottoman at it's current state is pre-alpha software and still under heavy development. 
-Please be aware that important areas such as the public API may see backwards 
-incompatible changes between versions.
+== Repository Organization
+
+	We recommend reading the great branching model that Vincent Driessen wrote up.  It 
+	will help in understanding our development process when it comes to Git.
+
+		* http://nvie.com/git-model
+
+== References
+
+	SineSignal web site
+	http://sinesignal.com
+
+	CouchDB web site
+	http://couchdb.apache.org
 
 == License
 
-Copyright 2007-2009 SineSignal, LLC.
+Copyright 2010 SineSignal, LLC.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -31,4 +43,3 @@ Copyright 2007-2009 SineSignal, LLC.
 
 ---
 The Ottoman Dev Team
-http://sinesignal.com

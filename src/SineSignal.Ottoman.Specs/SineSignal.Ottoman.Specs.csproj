@@ -49,9 +49,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\tools\nunit\framework\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f">
+    <Reference Include="NSubstitute, Version=0.1.2.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\tools\rhinomocks\Rhino.Mocks.dll</HintPath>
+      <HintPath>..\..\tools\nsubstitute\NSubstitute.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

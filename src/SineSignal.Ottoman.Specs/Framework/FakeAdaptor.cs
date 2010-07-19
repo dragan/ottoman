@@ -1,4 +1,4 @@
-using Rhino.Mocks;
+using NSubstitute;
 
 namespace SineSignal.Ottoman.Specs.Framework
 {
@@ -6,7 +6,7 @@ namespace SineSignal.Ottoman.Specs.Framework
 	{
 		public static T Create<T>() where T : class
 		{
-			return MockRepository.GenerateStub<T>();
+			return Substitute.For<T>();
 		}
 	}
 }

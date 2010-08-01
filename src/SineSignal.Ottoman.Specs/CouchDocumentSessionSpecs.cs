@@ -5,6 +5,8 @@ using NSubstitute;
 using NUnit.Framework;
 using SineSignal.Ottoman.Specs.Framework;
 
+using SineSignal.Ottoman.Exceptions;
+
 namespace SineSignal.Ottoman.Specs
 {
 	public class CouchDocumentSessionSpecs
@@ -117,6 +119,54 @@ namespace SineSignal.Ottoman.Specs
 			{
 				Employee entity = Sut.Load<Employee>(id.ToString());
 				Assert.That(entity, Is.EqualTo(entity1));
+			}
+		}
+		
+		public class When_attempting_to_store_a_different_entity_with_the_same_id_as_another : ConcernFor<CouchDocumentSession>
+		{
+			private Guid id;
+			private Employee entity1;
+			private Employee entity2;
+			private Type entity2Type;
+			private PropertyInfo identityProperty;
+			private IDocumentConvention documentConvention;
+			private NonUniqueEntityException thrownException;
+			
+			protected override void Given()
+			{
+				id = Guid.NewGuid();
+				entity1 = new Employee { Id = id, Name = "Bob", Login = "boblogin" };
+				entity2 = new Employee { Id = id, Name = "Carl", Login = "carllogin" };
+				entity2Type = entity2.GetType();
+				identityProperty = entity2Type.GetProperty("Id");
+				documentConvention = Fake<IDocumentConvention>();
+				documentConvention.GetIdentityPropertyFor(entity2Type).Returns(identityProperty);
+			}
+			
+			public override CouchDocumentSession CreateSystemUnderTest()
+			{
+				var couchDocumentSession = new CouchDocumentSession(documentConvention);
+				couchDocumentSession.Store(entity1);
+				return couchDocumentSession;
+			}
+			
+			protected override void When()
+			{
+				try
+				{
+					Sut.Store(entity2);
+				}
+				catch (NonUniqueEntityException ex)
+				{
+					thrownException = ex;
+				}
+			}
+			
+			[Test]
+			public void Should_throw_non_unique_entity_exception()
+			{
+				Assert.That(thrownException, Is.Not.Null);
+				Assert.That(thrownException.Message, Is.EqualTo("Attempted to associate a different entity with id '" + id + "'."));
 			}
 		}
 	}

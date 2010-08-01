@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
+using SineSignal.Ottoman.Exceptions;
+
 namespace SineSignal.Ottoman
 {
 	public class CouchDocumentSession
@@ -34,6 +36,14 @@ namespace SineSignal.Ottoman
 			
 			if (id != null)
 			{
+				if (IdentityMap.ContainsKey(id.ToString()))
+				{
+					if (ReferenceEquals(IdentityMap[id.ToString()], entity))
+						return;
+					
+					throw new NonUniqueEntityException("Attempted to associate a different entity with id '" + id + "'.");
+				}
+				
 				IdentityMap[id.ToString()] = entity;
 			}
 		}

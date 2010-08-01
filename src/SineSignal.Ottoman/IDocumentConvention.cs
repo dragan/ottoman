@@ -6,6 +6,6 @@ namespace SineSignal.Ottoman
 	public interface IDocumentConvention
 	{
 		PropertyInfo GetIdentityPropertyFor(Type entityType);
-		Guid GenerateIdentityFor(Type identityType);
+		object GenerateIdentityFor(Type identityType);
 	}
 }

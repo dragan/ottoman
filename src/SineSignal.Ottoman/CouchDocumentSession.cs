@@ -17,16 +17,25 @@ namespace SineSignal.Ottoman
 		
 		public void Store(object entity)
 		{
-			// What do we want the store method to do
-			// 1.  Using the default convention, find the id property
-			// 2.  Using the default convention, generate a new id
-			// 3.  Set our found id property to the generated id
-			// 4.  Add the entity to the identity map
 			Type entityType = entity.GetType();
 			PropertyInfo identityProperty = DocumentConvention.GetIdentityPropertyFor(entityType);
-			var id = DocumentConvention.GenerateIdentityFor(identityProperty.PropertyType);
-			identityProperty.SetValue(entity, id, null);
-			IdentityMap[id.ToString()] = entity;
+			
+			object id = null;
+			if (identityProperty != null)
+			{
+				id = GetIdentityValueFor(entity, identityProperty);
+				
+				if (id == null)
+				{
+					id = DocumentConvention.GenerateIdentityFor(identityProperty.PropertyType);
+					identityProperty.SetValue(entity, id, null);
+				}
+			}
+			
+			if (id != null)
+			{
+				IdentityMap[id.ToString()] = entity;
+			}
 		}
 		
 		public T Load<T>(string id)
@@ -38,6 +47,20 @@ namespace SineSignal.Ottoman
 		    }
 			
 			return default(T);
+		}
+		
+		private static object GetIdentityValueFor(object entity, PropertyInfo identityProperty)
+		{
+			object id = identityProperty.GetValue(entity, null);
+			
+			Type propertyType = identityProperty.PropertyType;
+			if (propertyType == typeof(Guid))
+			{
+				if ((Guid)id == Guid.Empty)
+					id = null;
+			}
+			
+			return id;
 		}
 	}
 }

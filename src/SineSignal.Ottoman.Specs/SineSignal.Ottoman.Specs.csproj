@@ -35,6 +35,7 @@
     <Compile Include="Framework\ConcernFor.cs" />
     <Compile Include="Framework\FakeAdaptor.cs" />
     <Compile Include="Framework\StaticConcern.cs" />
+    <Compile Include="CouchDocumentSessionSpecs.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SineSignal.Ottoman\SineSignal.Ottoman.csproj">

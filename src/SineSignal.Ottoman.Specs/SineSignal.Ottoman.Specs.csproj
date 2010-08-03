@@ -36,6 +36,8 @@
     <Compile Include="Framework\FakeAdaptor.cs" />
     <Compile Include="Framework\StaticConcern.cs" />
     <Compile Include="CouchDocumentSessionSpecs.cs" />
+    <Compile Include="CouchProxySpecs.cs" />
+    <Compile Include="CouchDocumentSpecs.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SineSignal.Ottoman\SineSignal.Ottoman.csproj">
@@ -54,6 +56,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\tools\nsubstitute\NSubstitute.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

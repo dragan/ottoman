@@ -1,26 +1,30 @@
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Reflection;
 
+using SineSignal.Ottoman.Commands;
 using SineSignal.Ottoman.Exceptions;
+using SineSignal.Ottoman.Http;
 
 namespace SineSignal.Ottoman
 {
-	public class CouchDocumentSession
+	public class CouchDocumentSession : ICouchDocumentSession
 	{
-		public IDocumentConvention DocumentConvention { get; private set; }
+		public ICouchDatabase CouchDatabase { get; private set; }
+
 		private Dictionary<string, object> IdentityMap { get; set; }
 		
-		public CouchDocumentSession(IDocumentConvention documentConvention)
+		public CouchDocumentSession(ICouchDatabase couchDatabase)
 		{
-			DocumentConvention = documentConvention;
+			CouchDatabase = couchDatabase;
 			IdentityMap = new Dictionary<string, object>();
 		}
 		
 		public void Store(object entity)
 		{
 			Type entityType = entity.GetType();
-			PropertyInfo identityProperty = DocumentConvention.GetIdentityPropertyFor(entityType);
+			PropertyInfo identityProperty = CouchDatabase.DocumentConvention.GetIdentityPropertyFor(entityType);
 			
 			object id = null;
 			if (identityProperty != null)
@@ -29,7 +33,7 @@ namespace SineSignal.Ottoman
 				
 				if (id == null)
 				{
-					id = DocumentConvention.GenerateIdentityFor(identityProperty.PropertyType);
+					id = CouchDatabase.DocumentConvention.GenerateIdentityFor(identityProperty.PropertyType);
 					identityProperty.SetValue(entity, id, null);
 				}
 			}
@@ -57,6 +61,17 @@ namespace SineSignal.Ottoman
 		    }
 			
 			return default(T);
+		}
+		
+		public void SaveChanges()
+		{
+			var docs = new List<dynamic>();
+			foreach (object entity in IdentityMap.Values)
+			{
+				PropertyInfo identityProperty = CouchDatabase.DocumentConvention.GetIdentityPropertyFor(entity.GetType());
+				dynamic couchDocument = new CouchDocument(entity, identityProperty);
+				docs.Add(couchDocument);
+			}
 		}
 		
 		private static object GetIdentityValueFor(object entity, PropertyInfo identityProperty)

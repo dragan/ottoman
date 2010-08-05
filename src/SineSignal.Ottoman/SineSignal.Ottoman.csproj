@@ -45,6 +45,7 @@
     <Compile Include="Commands\ICouchCommand.cs" />
     <Compile Include="ICouchDatabase.cs" />
     <Compile Include="ICouchDocumentSession.cs" />
+    <Compile Include="Commands\BulkDocsCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

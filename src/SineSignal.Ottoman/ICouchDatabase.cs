@@ -4,5 +4,6 @@ namespace SineSignal.Ottoman
 	{
 		ICouchProxy CouchProxy { get; }
 		IDocumentConvention DocumentConvention { get; }
+		string Name { get; }
 	}
 }

@@ -14,11 +14,13 @@ namespace SineSignal.Ottoman
 		public ICouchDatabase CouchDatabase { get; private set; }
 
 		private Dictionary<string, object> IdentityMap { get; set; }
+		private Dictionary<string, DocumentMetadata> MetaDataMap { get; set; }
 		
 		public CouchDocumentSession(ICouchDatabase couchDatabase)
 		{
 			CouchDatabase = couchDatabase;
 			IdentityMap = new Dictionary<string, object>();
+			MetaDataMap = new Dictionary<string, DocumentMetadata>();
 		}
 		
 		public void Store(object entity)
@@ -65,12 +67,22 @@ namespace SineSignal.Ottoman
 		
 		public void SaveChanges()
 		{
-			var docs = new List<dynamic>();
+			var docs = new List<CouchDocument>();
 			foreach (object entity in IdentityMap.Values)
 			{
 				PropertyInfo identityProperty = CouchDatabase.DocumentConvention.GetIdentityPropertyFor(entity.GetType());
-				dynamic couchDocument = new CouchDocument(entity, identityProperty);
+				var couchDocument = new CouchDocument(entity, identityProperty);
 				docs.Add(couchDocument);
+			}
+			
+			var bulkDocsMessage = new BulkDocsMessage(docs);
+			var bulkDocsCommand = new BulkDocsCommand(CouchDatabase.Name, bulkDocsMessage);
+			BulkDocsResult[] results = CouchDatabase.CouchProxy.Execute<BulkDocsResult[]>(bulkDocsCommand);
+			
+			for (int index = 0; index < results.Length; index++)
+			{
+				BulkDocsResult result = results[index];
+				MetaDataMap[result.Id] = new DocumentMetadata { Id = result.Id, Rev = result.Rev };
 			}
 		}
 		
@@ -86,6 +98,12 @@ namespace SineSignal.Ottoman
 			}
 			
 			return id;
+		}
+		
+		public class DocumentMetadata
+		{
+			public string Id { get; set; }
+			public string Rev { get; set; }
 		}
 	}
 }

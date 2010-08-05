@@ -34,13 +34,28 @@
     <Compile Include="CouchDocumentSession.cs" />
     <Compile Include="IDocumentConvention.cs" />
     <Compile Include="Exceptions\NonUniqueEntityException.cs" />
+    <Compile Include="Http\HttpClient.cs" />
+    <Compile Include="Http\HttpRequest.cs" />
+    <Compile Include="Http\HttpMethod.cs" />
+    <Compile Include="Http\HttpResponse.cs" />
+    <Compile Include="Http\IHttpClient.cs" />
+    <Compile Include="Http\HttpHeader.cs" />
+    <Compile Include="CouchDocument.cs" />
+    <Compile Include="ICouchProxy.cs" />
+    <Compile Include="Commands\ICouchCommand.cs" />
+    <Compile Include="ICouchDatabase.cs" />
+    <Compile Include="ICouchDocumentSession.cs" />
+    <Compile Include="Commands\BulkDocsCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Exceptions\" />
+    <Folder Include="Http\" />
+    <Folder Include="Commands\" />
   </ItemGroup>
 </Project>

@@ -1,26 +1,32 @@
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Reflection;
 
+using SineSignal.Ottoman.Commands;
 using SineSignal.Ottoman.Exceptions;
+using SineSignal.Ottoman.Http;
 
 namespace SineSignal.Ottoman
 {
-	public class CouchDocumentSession
+	public class CouchDocumentSession : ICouchDocumentSession
 	{
-		public IDocumentConvention DocumentConvention { get; private set; }
+		public ICouchDatabase CouchDatabase { get; private set; }
+
 		private Dictionary<string, object> IdentityMap { get; set; }
+		private Dictionary<string, DocumentMetadata> MetaDataMap { get; set; }
 		
-		public CouchDocumentSession(IDocumentConvention documentConvention)
+		public CouchDocumentSession(ICouchDatabase couchDatabase)
 		{
-			DocumentConvention = documentConvention;
+			CouchDatabase = couchDatabase;
 			IdentityMap = new Dictionary<string, object>();
+			MetaDataMap = new Dictionary<string, DocumentMetadata>();
 		}
 		
 		public void Store(object entity)
 		{
 			Type entityType = entity.GetType();
-			PropertyInfo identityProperty = DocumentConvention.GetIdentityPropertyFor(entityType);
+			PropertyInfo identityProperty = CouchDatabase.DocumentConvention.GetIdentityPropertyFor(entityType);
 			
 			object id = null;
 			if (identityProperty != null)
@@ -29,7 +35,7 @@ namespace SineSignal.Ottoman
 				
 				if (id == null)
 				{
-					id = DocumentConvention.GenerateIdentityFor(identityProperty.PropertyType);
+					id = CouchDatabase.DocumentConvention.GenerateIdentityFor(identityProperty.PropertyType);
 					identityProperty.SetValue(entity, id, null);
 				}
 			}
@@ -59,6 +65,27 @@ namespace SineSignal.Ottoman
 			return default(T);
 		}
 		
+		public void SaveChanges()
+		{
+			var docs = new List<CouchDocument>();
+			foreach (object entity in IdentityMap.Values)
+			{
+				PropertyInfo identityProperty = CouchDatabase.DocumentConvention.GetIdentityPropertyFor(entity.GetType());
+				var couchDocument = new CouchDocument(entity, identityProperty);
+				docs.Add(couchDocument);
+			}
+			
+			var bulkDocsMessage = new BulkDocsMessage(docs);
+			var bulkDocsCommand = new BulkDocsCommand(CouchDatabase.Name, bulkDocsMessage);
+			BulkDocsResult[] results = CouchDatabase.CouchProxy.Execute<BulkDocsResult[]>(bulkDocsCommand);
+			
+			for (int index = 0; index < results.Length; index++)
+			{
+				BulkDocsResult result = results[index];
+				MetaDataMap[result.Id] = new DocumentMetadata { Id = result.Id, Rev = result.Rev };
+			}
+		}
+		
 		private static object GetIdentityValueFor(object entity, PropertyInfo identityProperty)
 		{
 			object id = identityProperty.GetValue(entity, null);
@@ -71,6 +98,12 @@ namespace SineSignal.Ottoman
 			}
 			
 			return id;
+		}
+		
+		public class DocumentMetadata
+		{
+			public string Id { get; set; }
+			public string Rev { get; set; }
 		}
 	}
 }

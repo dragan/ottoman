@@ -4,6 +4,6 @@ namespace SineSignal.Ottoman
 {
 	public interface ICouchProxy
 	{
-		void Execute(ICouchCommand couchCommand);
+		TResult Execute<TResult>(ICouchCommand couchCommand);
 	}
 }

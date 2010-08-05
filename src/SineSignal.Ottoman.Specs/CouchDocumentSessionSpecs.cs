@@ -195,7 +195,8 @@ namespace SineSignal.Ottoman.Specs
 			private Type identityType;
 			private Guid id;
 			private IDocumentConvention documentConvention;
-			private dynamic couchDocument;
+			private BulkDocsResult[] bulkDocsResults;
+			private ICouchProxy couchProxy;
 			private ICouchDatabase couchDatabase;
 			
 			protected override void Given()
@@ -210,10 +211,15 @@ namespace SineSignal.Ottoman.Specs
 				documentConvention.GetIdentityPropertyFor(entity1Type).Returns(identityProperty);
 				documentConvention.GenerateIdentityFor(identityType).Returns(id);
 				
-				couchDocument = new CouchDocument(entity1, identityProperty);
+				bulkDocsResults = new BulkDocsResult[1];
+				bulkDocsResults[0] = new BulkDocsResult { Id = id.ToString(), Rev = "123456" };
+				couchProxy = Fake<ICouchProxy>();
+				couchProxy.Execute<BulkDocsResult[]>(Arg.Any<BulkDocsCommand>()).Returns(bulkDocsResults);
 				
 				couchDatabase = Fake<ICouchDatabase>();
 				couchDatabase.DocumentConvention.Returns(documentConvention);
+				couchDatabase.Name.Returns("ottoman-test-database");
+				couchDatabase.CouchProxy.Returns(couchProxy);
 			}
 			
 			public override CouchDocumentSession CreateSystemUnderTest()
@@ -231,6 +237,12 @@ namespace SineSignal.Ottoman.Specs
 			public void Should_call_get_identity_property()
 			{
 				documentConvention.Received().GetIdentityPropertyFor(entity1Type);
+			}
+			
+			[Test]
+			public void Should_execute_bulk_docs_command_with_couch_proxy()
+			{
+				couchProxy.Received().Execute<BulkDocsResult[]>(Arg.Any<BulkDocsCommand>());
 			}
 		}
 	}

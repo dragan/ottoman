@@ -8,11 +8,22 @@ namespace SineSignal.Ottoman.Commands
 {
 	public class BulkDocsCommand : ICouchCommand
 	{
-		public string Method { get; private set; }
+		private readonly BulkDocsMessage _message;
+		
+		public string Route { get; private set; }
+		
+		public string Operation { get; private set; }
+		
+		public object Message
+		{
+			get { return _message; }
+		}
 		
 		public BulkDocsCommand(string databaseName, BulkDocsMessage message)
 		{
-			Method = HttpMethod.Post;
+			Route = databaseName + "/_bulk_docs";
+			Operation = HttpMethod.Post;
+			_message = message;
 		}
 	}
 	

@@ -8,6 +8,7 @@ using SineSignal.Ottoman.Specs.Framework;
 
 using SineSignal.Ottoman.Commands;
 using SineSignal.Ottoman.Exceptions;
+using SineSignal.Ottoman.Http;
 
 namespace SineSignal.Ottoman.Specs
 {
@@ -242,7 +243,12 @@ namespace SineSignal.Ottoman.Specs
 			[Test]
 			public void Should_execute_bulk_docs_command_with_couch_proxy()
 			{
-				couchProxy.Received().Execute<BulkDocsResult[]>(Arg.Any<BulkDocsCommand>());
+				couchProxy.Received().Execute<BulkDocsResult[]>(Arg.Is<BulkDocsCommand>(c => {
+					var message = (BulkDocsMessage)c.Message;
+					return c.Route == couchDatabase.Name + "/_bulk_docs" && 
+						   c.Operation == HttpMethod.Post && 
+						   (message.NonAtomic == false && message.AllOrNothing == false && message.Docs.Length == 1);
+				}));
 			}
 		}
 	}

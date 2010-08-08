@@ -17,6 +17,7 @@ namespace SineSignal.Ottoman.Http
 		private static HttpWebRequest InitializeHttpWebRequest(HttpRequest httpRequest)
 		{
 			HttpWebRequest httpWebRequest = WebRequest.Create(httpRequest.Url) as HttpWebRequest;
+			httpWebRequest.Accept = httpRequest.Accept;
 			httpWebRequest.UserAgent = USER_AGENT;
 			httpWebRequest.Method = httpRequest.Method;
 			httpWebRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;

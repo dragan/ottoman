@@ -67,15 +67,15 @@ namespace SineSignal.Ottoman.Specs
 				Assert.That(resultStub.Status, Is.EqualTo("completed"));
 			}
 		}
-		
-		public class ResultStub
-		{
-			public string Status { get; private set; }
+	}
+	
+	public class ResultStub
+	{
+		public string Status { get; private set; }
 			
-			public ResultStub()
-			{
-				Status = "completed";
-			}
+		public ResultStub()
+		{
+			Status = "completed";
 		}
 	}
 }

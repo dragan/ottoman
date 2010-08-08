@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace SineSignal.Ottoman.Http
 {
 	public class RestResponse<T>
@@ -6,7 +8,7 @@ namespace SineSignal.Ottoman.Http
 		public string ContentType { get; set; }
 		public long ContentLength { get; set; }
 		public string Content { get; set; }
-		public System.Net.HttpStatusCode StatusCode { get; set; }
+		public HttpStatusCode StatusCode { get; set; }
 		public string StatusDescription { get; set; }
 		public T ContentDeserialized { get; set; }
 	}

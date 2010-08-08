@@ -50,6 +50,8 @@
     <Compile Include="Http\RestResponse.cs" />
     <Compile Include="Http\IRestClient.cs" />
     <Compile Include="CouchProxy.cs" />
+    <Compile Include="Http\RestClient.cs" />
+    <Compile Include="Serialization\ISerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -61,5 +63,6 @@
     <Folder Include="Exceptions\" />
     <Folder Include="Http\" />
     <Folder Include="Commands\" />
+    <Folder Include="Serialization\" />
   </ItemGroup>
 </Project>

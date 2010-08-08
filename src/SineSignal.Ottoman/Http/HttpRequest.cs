@@ -8,6 +8,7 @@ namespace SineSignal.Ottoman.Http
 	{
 		public Uri Url { get; set; }
 		public IList<HttpHeader> Headers { get; private set; }
+		public string Accept { get; set; }
 		public string Method { get; set; }
 		public string ContentType { get; set; }
 		public string Content { get; set; }

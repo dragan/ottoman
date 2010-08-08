@@ -38,6 +38,7 @@
     <Compile Include="CouchDocumentSessionSpecs.cs" />
     <Compile Include="CouchProxySpecs.cs" />
     <Compile Include="CouchDocumentSpecs.cs" />
+    <Compile Include="Http\RestClientSpecs.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SineSignal.Ottoman\SineSignal.Ottoman.csproj">
@@ -61,5 +62,6 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Framework\" />
+    <Folder Include="Http\" />
   </ItemGroup>
 </Project>

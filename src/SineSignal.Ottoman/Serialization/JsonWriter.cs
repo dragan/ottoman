@@ -48,7 +48,14 @@ namespace SineSignal.Ottoman.Serialization
 		
 		public void WriteString(string text)
 		{
-			PutStringValue(text);
+			if (text != null)
+			{
+				PutStringValue(text);
+			}
+			else
+			{
+				PutValue("null");
+			}
 		}
 		
 		public void WriteNumber(int number)

@@ -508,5 +508,58 @@ namespace SineSignal.Ottoman.Specs.Serialization
 				Assert.That(Sut.ToString(), Is.EqualTo(output));
 			}
 		}
+		
+		public class When_writing_a_null_string_in_an_array : JsonWriterConcern
+		{
+			private string value1;
+			private string output;
+			
+			protected override void Given()
+			{
+				value1 = null;
+				output = "[null]";
+			}
+			
+			protected override void When()
+			{
+				Sut.BeginArray();
+				Sut.WriteString(value1);
+				Sut.EndArray();
+			}
+			
+			[Test]
+			public void Should_output_string_in_valid_JSON_array_format()
+			{
+				Assert.That(Sut.ToString(), Is.EqualTo(output));
+			}
+		}
+		
+		public class When_writing_a_null_string_in_an_object : JsonWriterConcern
+		{
+			private string name1;
+			private string value1;
+			private string output;
+			
+			protected override void Given()
+			{
+				name1 = "name1";
+				value1 = null;
+				output = "{\"name1\":null}";
+			}
+			
+			protected override void When()
+			{
+				Sut.BeginObject();
+				Sut.WriteMember(name1);
+				Sut.WriteString(value1);
+				Sut.EndObject();
+			}
+			
+			[Test]
+			public void Should_output_string_in_valid_JSON_object_format()
+			{
+				Assert.That(Sut.ToString(), Is.EqualTo(output));
+			}
+		}
 	}
 }

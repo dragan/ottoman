@@ -52,6 +52,7 @@
     <Compile Include="CouchProxy.cs" />
     <Compile Include="Http\RestClient.cs" />
     <Compile Include="Serialization\ISerializer.cs" />
+    <Compile Include="Serialization\JsonWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

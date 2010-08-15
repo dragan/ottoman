@@ -561,5 +561,40 @@ namespace SineSignal.Ottoman.Specs.Serialization
 				Assert.That(Sut.ToString(), Is.EqualTo(output));
 			}
 		}
+		
+		public class When_resetting_the_json_writer : ConcernFor<JsonWriter>
+		{
+			private string name1;
+			private string value1;
+			private string output;
+			
+			protected override void Given()
+			{
+				name1 = "name1";
+				value1 = null;
+				output = String.Empty;
+			}
+			
+			public override JsonWriter CreateSystemUnderTest()
+			{
+				var jsonWriter = new JsonWriter();
+				jsonWriter.BeginObject();
+				jsonWriter.WriteMember(name1);
+				jsonWriter.WriteString(value1);
+				jsonWriter.EndObject();
+				return jsonWriter;
+			}
+			
+			protected override void When()
+			{
+				Sut.Reset();
+			}
+			
+			[Test]
+			public void Should_set_the_internal_string_builder_to_an_empty_string()
+			{
+				Assert.That(Sut.ToString(), Is.EqualTo(output));
+			}
+		}
 	}
 }

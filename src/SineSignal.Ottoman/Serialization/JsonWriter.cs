@@ -10,6 +10,7 @@ namespace SineSignal.Ottoman.Serialization
 	{
 		private static NumberFormatInfo numberFormatInfo;
 		
+		private StringBuilder internalStringBuilder;
 		private TextWriter writer;
 		private Stack<Scope> scopes;
 		
@@ -20,7 +21,8 @@ namespace SineSignal.Ottoman.Serialization
 		
 		public JsonWriter()
 		{
-			writer = new StringWriter();
+			internalStringBuilder = new StringBuilder();
+			writer = new StringWriter(internalStringBuilder);
 			scopes = new Stack<Scope>();
 		}
 		
@@ -88,9 +90,22 @@ namespace SineSignal.Ottoman.Serialization
 			EndScope();
 		}
 		
+		public void Reset()
+		{
+			if (internalStringBuilder != null)
+			{
+				internalStringBuilder.Remove(0, internalStringBuilder.Length);
+			}
+		}
+		
 		public override string ToString()
 		{
-			return writer.ToString();
+			if (internalStringBuilder != null)
+			{
+				return internalStringBuilder.ToString();
+			}
+			
+			return String.Empty;
 		}
 		
 		private void PutValue(string text)

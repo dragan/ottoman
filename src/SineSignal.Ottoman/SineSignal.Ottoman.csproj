@@ -53,6 +53,10 @@
     <Compile Include="Http\RestClient.cs" />
     <Compile Include="Serialization\ISerializer.cs" />
     <Compile Include="Serialization\JsonWriter.cs" />
+    <Compile Include="Serialization\JsonReader.cs" />
+    <Compile Include="Serialization\JsonParserToken.cs" />
+    <Compile Include="Serialization\JsonException.cs" />
+    <Compile Include="Serialization\JsonParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

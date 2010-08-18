@@ -57,6 +57,9 @@
     <Compile Include="Serialization\JsonParserToken.cs" />
     <Compile Include="Serialization\JsonException.cs" />
     <Compile Include="Serialization\JsonParser.cs" />
+    <Compile Include="Serialization\JsonConvert.cs" />
+    <Compile Include="Serialization\JsonSerializer.cs" />
+    <Compile Include="Serialization\JsonMemberAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

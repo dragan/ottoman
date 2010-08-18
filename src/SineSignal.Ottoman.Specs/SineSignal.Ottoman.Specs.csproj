@@ -39,6 +39,10 @@
     <Compile Include="CouchProxySpecs.cs" />
     <Compile Include="CouchDocumentSpecs.cs" />
     <Compile Include="Http\RestClientSpecs.cs" />
+    <Compile Include="Serialization\JsonWriterSpecs.cs" />
+    <Compile Include="Serialization\JsonReaderSpecs\ReadingObjectsSpecs.cs" />
+    <Compile Include="Serialization\JsonReaderSpecs\ReadingArraySpecs.cs" />
+    <Compile Include="Serialization\JsonSerializerSpecs.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SineSignal.Ottoman\SineSignal.Ottoman.csproj">
@@ -63,5 +67,7 @@
   <ItemGroup>
     <Folder Include="Framework\" />
     <Folder Include="Http\" />
+    <Folder Include="Serialization\" />
+    <Folder Include="Serialization\JsonReaderSpecs\" />
   </ItemGroup>
 </Project>

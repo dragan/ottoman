@@ -65,6 +65,17 @@ namespace SineSignal.Ottoman.Serialization
 			PutValue(Convert.ToString(number, numberFormatInfo));
 		}
 		
+		public void WriteNumber(long number)
+		{
+			PutValue(Convert.ToString(number, numberFormatInfo));
+		}
+		
+		// This makes us not CLS Compliant
+		public void WriteNumber(ulong number)
+		{
+			PutValue(Convert.ToString(number, numberFormatInfo));
+        }
+		
 		public void WriteNumber(float number)
 		{
 			PutValue(Convert.ToString(number, numberFormatInfo));

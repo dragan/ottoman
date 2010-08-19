@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
 
@@ -169,14 +168,13 @@ namespace SineSignal.Ottoman.Serialization
 			// At this point obj must be a complex type
 			jsonWriter.BeginObject();
 				
-			PropertyDescriptorCollection propertyDescriptors = TypeDescriptor.GetProperties(type);
-			foreach (PropertyDescriptor propertyDescriptor in propertyDescriptors)
+			foreach (PropertyInfo propertyInfo in type.GetProperties())
 			{
-				object propertyValue = propertyDescriptor.GetValue(obj);
+				object propertyValue = propertyInfo.GetValue(obj, null);
 				
 				if (propertyValue != null)
 				{
-					string propertyName = GetPropertyName(propertyDescriptor);
+					string propertyName = GetPropertyName(propertyInfo);
 					jsonWriter.WriteMember(propertyName);
 					WriteValue(propertyValue, jsonWriter);
 				}
@@ -407,7 +405,9 @@ namespace SineSignal.Ottoman.Serialization
 			
 			foreach (PropertyInfo propertyInfo in type.GetProperties())
 			{
-				if (propertyInfo.Name == "Item")
+				string propertyName = GetPropertyName(propertyInfo);
+				
+				if (propertyName == "Item")
 				{
 					ParameterInfo[] parameters = propertyInfo.GetIndexParameters();
 					
@@ -424,7 +424,7 @@ namespace SineSignal.Ottoman.Serialization
 				propertyData.Info = propertyInfo;
 				propertyData.Type = propertyInfo.PropertyType;
 				
-				data.Properties.Add(propertyInfo.Name, propertyData);
+				data.Properties.Add(propertyName, propertyData);
 			}
 			
 			foreach (FieldInfo fieldInfo in type.GetFields())
@@ -489,19 +489,19 @@ namespace SineSignal.Ottoman.Serialization
 			}
 		}
 		
-		private static string GetPropertyName(PropertyDescriptor propertyDescriptor)
+		private static string GetPropertyName(PropertyInfo propertyInfo)
 		{
-			string propertyName = propertyDescriptor.Name;
+			string propertyName = propertyInfo.Name;
 			
-			AttributeCollection attributes = propertyDescriptor.Attributes;
+			object[] jsonMemberAttributes = propertyInfo.GetCustomAttributes(typeof(JsonMemberAttribute), true);
 			
-			if (attributes.Count > 0)
+			if (jsonMemberAttributes.Length == 1)
 			{
-				JsonMemberAttribute jsonMember = attributes[typeof(JsonMemberAttribute)] as JsonMemberAttribute;
+				JsonMemberAttribute jsonMemberAttribute = jsonMemberAttributes[0] as JsonMemberAttribute;
 				
-				if (jsonMember != null)
+				if (jsonMemberAttribute != null)
 				{
-					propertyName = jsonMember.Name;
+					propertyName = jsonMemberAttribute.Name;
 				}
 			}
 			

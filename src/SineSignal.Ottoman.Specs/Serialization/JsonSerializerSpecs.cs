@@ -175,28 +175,27 @@ namespace SineSignal.Ottoman.Specs.Serialization
 			}
 		}
 		
-		// TODO: Uncomment and get this test passing by adding logic to read the member attribute if one exists.
-//		public class When_deserializing_a_complex_type_with_a_custom_json_member_attribute : JsonSerializerConcern
-//		{
-//			private string input;
-//			private ComplexTypeWithCustomProperty output;
-//			
-//			protected override void Given()
-//			{
-//				input = "{\"property_one\":10}";
-//			}
-//			
-//			protected override void When()
-//			{
-//				output = Sut.Deserialize<ComplexTypeWithCustomProperty>(input);
-//			}
-//			
-//			[Test]
-//			public void Should_use_custom_property_name_instead_of_property_name_when_reading()
-//			{
-//				Assert.That(output.Property1, Is.EqualTo(10));
-//			}
-//		}
+		public class When_deserializing_a_complex_type_with_a_custom_json_member_attribute : JsonSerializerConcern
+		{
+			private string input;
+			private ComplexTypeWithCustomProperty output;
+			
+			protected override void Given()
+			{
+				input = "{\"property_one\":10}";
+			}
+			
+			protected override void When()
+			{
+				output = Sut.Deserialize<ComplexTypeWithCustomProperty>(input);
+			}
+			
+			[Test]
+			public void Should_use_json_member_attribute_name_to_set_the_property_value()
+			{
+				Assert.That(output.Property1, Is.EqualTo(10));
+			}
+		}
 	}
 	
 	public class ComplexType

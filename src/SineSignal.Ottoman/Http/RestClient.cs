@@ -12,6 +12,10 @@ namespace SineSignal.Ottoman.Http
 		private IHttpClient HttpClient { get; set; }
 		private ISerializer Serializer { get; set; }
 		
+		public RestClient(Uri baseUri) : this(baseUri, new HttpClient(), new JsonSerializer())
+		{
+		}
+		
 		public RestClient(Uri baseUri, IHttpClient httpClient, ISerializer serializer)
 		{
 			_requestUri = new UriBuilder(baseUri);
@@ -32,12 +36,25 @@ namespace SineSignal.Ottoman.Http
 		{
 			_requestUri.Path = restRequest.Path;
 			
+			string content = String.Empty;
+			string contentType = String.Empty;
+			
+			if (restRequest.Method == HttpMethod.Put || 
+				restRequest.Method == HttpMethod.Post)
+			{
+				if (restRequest.Payload != null)
+				{
+					contentType = "application/json";
+					content = Serializer.Serialize(restRequest.Payload);
+				}
+			}
+			
 			return new HttpRequest {
 				Url = _requestUri.Uri,
 				Accept = "application/json",
 				Method = restRequest.Method,
-				ContentType = "application/json",
-				Content = Serializer.Serialize(restRequest.Payload)
+				ContentType = contentType,
+				Content = content
 			};
 		}
 		

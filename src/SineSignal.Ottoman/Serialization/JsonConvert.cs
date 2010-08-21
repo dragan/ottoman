@@ -579,7 +579,7 @@ namespace SineSignal.Ottoman.Serialization
 			RegisterReader(DefaultReaders, typeof(string), typeof(char), reader);
 			
 			reader = (object input) => {
-				return Guid.Parse((string)input);
+				return new Guid(input.ToString());
 			};
 			RegisterReader(DefaultReaders, typeof(string), typeof(Guid), reader);
 			

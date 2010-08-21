@@ -2,6 +2,7 @@ using System;
 
 using NSubstitute;
 using NUnit.Framework;
+using NUnit.Framework.SyntaxHelpers;
 using SineSignal.Ottoman.Specs.Framework;
 
 using SineSignal.Ottoman.Serialization;
@@ -169,7 +170,6 @@ namespace SineSignal.Ottoman.Specs.Serialization
 		public class When_nesting_an_object_inside_an_object : JsonWriterConcern
 		{
 			private string name1;
-			private bool value1;
 			private string name2;
 			private bool value2;
 			private string name3;

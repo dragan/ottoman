@@ -11,29 +11,29 @@ namespace SineSignal.Ottoman.Serialization
 		private static JsonWriter StaticJsonWriter { get; set; }
 		private static readonly object StaticJsonWriterLock = new object();
 		
-		private static IDictionary<Type, IDictionary<Type, MethodInfo>> conv_ops;
-        private static readonly object conv_ops_lock = new object();
-		
 		private static IDictionary<Type, Action<object, JsonWriter>> DefaultWriters { get; set; }
 		private static IDictionary<Type, IDictionary<Type, Func<object, object>>> DefaultReaders { get; set; }
 		
-		private static IDictionary<Type, ArrayMetadata> arrayMetadata;
-        private static readonly object arrayMetadataLock = new object();
+		private static readonly object implicitConversionOperatorsLock = new object();
+		private static IDictionary<Type, IDictionary<Type, MethodInfo>> ImplicitConversionOperators { get; set; }
 		
-		private static IDictionary<Type, ObjectMetadata> objectMetadata;
+		private static readonly object arrayMetadataLock = new object();
+		private static IDictionary<Type, ArrayMetadata> ArrayData { get; set; }
+		
 		private static readonly object objectMetadataLock = new object();
+		private static IDictionary<Type, ObjectMetadata> ObjectData { get; set; }
 		
-		private static IDictionary<Type, IList<PropertyMetadata>> TypeProperties { get; set; }
 		private static readonly object typePropertiesLock = new object();
+		private static IDictionary<Type, IList<PropertyInfo>> propertyMetadata { get; set; }
 		
 		private static IFormatProvider datetimeFormat;
 		
 		static JsonConvert()
 		{
-			arrayMetadata = new Dictionary<Type, ArrayMetadata>();
-			conv_ops = new Dictionary<Type, IDictionary<Type, MethodInfo>>();
-			objectMetadata = new Dictionary<Type, ObjectMetadata>();
-			TypeProperties = new Dictionary<Type, IList<PropertyMetadata>>();
+			ArrayData = new Dictionary<Type, ArrayMetadata>();
+			ImplicitConversionOperators = new Dictionary<Type, IDictionary<Type, MethodInfo>>();
+			ObjectData = new Dictionary<Type, ObjectMetadata>();
+			propertyMetadata = new Dictionary<Type, IList<PropertyInfo>>();
 			
 			StaticJsonWriter = new JsonWriter();
 			
@@ -166,10 +166,12 @@ namespace SineSignal.Ottoman.Serialization
             }
 			
 			// At this point obj must be a complex type
+			GetPropertiesFor(type);
+			
 			jsonWriter.BeginObject();
 				
-			foreach (PropertyInfo propertyInfo in type.GetProperties())
-			{
+			foreach (PropertyInfo propertyInfo in propertyMetadata[type])
+			{	
 				object propertyValue = propertyInfo.GetValue(obj, null);
 				
 				if (propertyValue != null)
@@ -213,11 +215,11 @@ namespace SineSignal.Ottoman.Serialization
 					return Enum.ToObject(type, jsonReader.CurrentTokenValue);
 				}
 				
-				MethodInfo conv_op = GetConvOp(type, jsonType);
+				MethodInfo implicitConversionOperator = GetImplicitConversionOperator(type, jsonType);
 				
-				if (conv_op != null)
+				if (implicitConversionOperator != null)
 				{
-					return conv_op.Invoke (null, new object[] { jsonReader.CurrentTokenValue });
+					return implicitConversionOperator.Invoke (null, new object[] { jsonReader.CurrentTokenValue });
 				}
 				
 				throw new JsonException(String.Format("Can't assign value '{0}' (type {1}) to type {2}", 
@@ -229,7 +231,7 @@ namespace SineSignal.Ottoman.Serialization
 			if (jsonReader.CurrentToken == JsonToken.ArrayStart)
 			{
 				AddArrayMetadata(type);
-				ArrayMetadata arratData = arrayMetadata[type];
+				ArrayMetadata arratData = ArrayData[type];
 				
 				if (!arratData.IsArray && ! arratData.IsList)
 					throw new JsonException(String.Format("Type {0} can't act as an array", type));
@@ -275,7 +277,7 @@ namespace SineSignal.Ottoman.Serialization
 			else if (jsonReader.CurrentToken == JsonToken.ObjectStart)
 			{	
 				AddObjectMetadata(type);
-				ObjectMetadata objectData = objectMetadata[type];
+				ObjectMetadata objectData = ObjectData[type];
 				
 				instance = Activator.CreateInstance(type);
 				
@@ -290,24 +292,15 @@ namespace SineSignal.Ottoman.Serialization
 					
 					if (objectData.Properties.ContainsKey(property))
 					{
-						PropertyMetadata propertyData = objectData.Properties[property];
-						
-						if (propertyData.IsField)
+						PropertyInfo propertyInfo = objectData.Properties[property];
+							
+						if (propertyInfo.CanWrite)
 						{
-							((FieldInfo) propertyData.Info).SetValue(instance, ReadValue(propertyData.Type, jsonReader));
+							propertyInfo.SetValue(instance, ReadValue(propertyInfo.PropertyType, jsonReader), null);
 						}
 						else
 						{
-							PropertyInfo propertyInfo = (PropertyInfo)propertyData.Info;
-							
-							if (propertyInfo.CanWrite)
-							{
-								propertyInfo.SetValue(instance, ReadValue(propertyData.Type, jsonReader), null);
-							}
-							else
-							{
-								ReadValue(propertyData.Type, jsonReader);
-							}
+							ReadValue(propertyInfo.PropertyType, jsonReader);
 						}
 					}
 					else
@@ -324,37 +317,37 @@ namespace SineSignal.Ottoman.Serialization
 			return instance;
 		}
 		
-		private static MethodInfo GetConvOp(Type t1, Type t2)
+		private static MethodInfo GetImplicitConversionOperator(Type type1, Type type2)
 		{
-			lock (conv_ops_lock)
+			lock (implicitConversionOperatorsLock)
 			{
-				if (! conv_ops.ContainsKey(t1))
-					conv_ops.Add (t1, new Dictionary<Type, MethodInfo>());
+				if (! ImplicitConversionOperators.ContainsKey(type1))
+					ImplicitConversionOperators.Add (type1, new Dictionary<Type, MethodInfo>());
 			}
 			
-			if (conv_ops[t1].ContainsKey(t2))
-				return conv_ops[t1][t2];
+			if (ImplicitConversionOperators[type1].ContainsKey(type2))
+				return ImplicitConversionOperators[type1][type2];
 			
-			MethodInfo op = t1.GetMethod("op_Implicit", new Type[] { t2 });
+			MethodInfo implicitConversionOperator = type1.GetMethod("op_Implicit", new Type[] { type2 });
 			
-			lock (conv_ops_lock)
+			lock (implicitConversionOperatorsLock)
 			{
 				try
 				{
-					conv_ops[t1].Add(t2, op);
+					ImplicitConversionOperators[type1].Add(type2, implicitConversionOperator);
 				}
 				catch (ArgumentException)
 				{
-					return conv_ops[t1][t2];
+					return ImplicitConversionOperators[type1][type2];
 				}
 			}
 			
-			return op;
+			return implicitConversionOperator;
 		}
 		
 		private static void AddArrayMetadata(Type type)
 		{
-			if (arrayMetadata.ContainsKey(type))
+			if (ArrayData.ContainsKey(type))
 				return;
 			
 			ArrayMetadata data = new ArrayMetadata();
@@ -382,7 +375,7 @@ namespace SineSignal.Ottoman.Serialization
 			{
 				try
 				{
-					arrayMetadata.Add(type, data);
+					ArrayData.Add(type, data);
 				}
 				catch (ArgumentException)
 				{
@@ -393,7 +386,7 @@ namespace SineSignal.Ottoman.Serialization
 		
 		private static void AddObjectMetadata(Type type)
 		{
-			if (objectMetadata.ContainsKey(type))
+			if (ObjectData.ContainsKey(type))
 				return;
 			
 			ObjectMetadata data = new ObjectMetadata();
@@ -401,7 +394,7 @@ namespace SineSignal.Ottoman.Serialization
 			if (type.GetInterface("System.Collections.IDictionary") != null)
 				data.IsDictionary = true;
 			
-			data.Properties = new Dictionary<string, PropertyMetadata>();
+			data.Properties = new Dictionary<string, PropertyInfo>();
 			
 			foreach (PropertyInfo propertyInfo in type.GetProperties())
 			{
@@ -420,28 +413,14 @@ namespace SineSignal.Ottoman.Serialization
 					continue;
 				}
 				
-				PropertyMetadata propertyData = new PropertyMetadata();
-				propertyData.Info = propertyInfo;
-				propertyData.Type = propertyInfo.PropertyType;
-				
-				data.Properties.Add(propertyName, propertyData);
-			}
-			
-			foreach (FieldInfo fieldInfo in type.GetFields())
-			{
-				PropertyMetadata propertyData = new PropertyMetadata();
-				propertyData.Info = fieldInfo;
-				propertyData.IsField = true;
-				propertyData.Type = fieldInfo.FieldType;
-				
-				data.Properties.Add(fieldInfo.Name, propertyData);
+				data.Properties.Add(propertyName, propertyInfo);
 			}
 			
 			lock (objectMetadataLock)
 			{
 				try
 				{
-					objectMetadata.Add(type, data);
+					ObjectData.Add(type, data);
 				}
 				catch (ArgumentException)
 				{
@@ -450,37 +429,26 @@ namespace SineSignal.Ottoman.Serialization
 			}
 		}
 		
-		private static void AddTypeProperties(Type type)
+		private static void GetPropertiesFor(Type type)
 		{
-			if (TypeProperties.ContainsKey(type))
+			if (propertyMetadata.ContainsKey(type))
 				return;
 			
-			IList<PropertyMetadata> properties = new List<PropertyMetadata>();
+			IList<PropertyInfo> properties = new List<PropertyInfo>();
 			
 			foreach (PropertyInfo propertyInfo in type.GetProperties())
 			{
 				if (propertyInfo.Name == "Item")
 					continue;
 				
-				PropertyMetadata propertyData = new PropertyMetadata();
-				propertyData.Info = propertyInfo;
-				propertyData.IsField = false;
-				properties.Add(propertyData);
-			}
-			
-			foreach (FieldInfo fieldInfo in type.GetFields())
-			{
-				PropertyMetadata propertyData = new PropertyMetadata();
-				propertyData.Info = fieldInfo;
-				propertyData.IsField = true;
-				properties.Add(propertyData);
+				properties.Add(propertyInfo);
 			}
 			
 			lock (typePropertiesLock)
 			{
 				try
 				{
-					TypeProperties.Add(type, properties);
+					propertyMetadata.Add(type, properties);
 				}
 				catch (ArgumentException)
 				{
@@ -631,13 +599,6 @@ namespace SineSignal.Ottoman.Serialization
 			table[jsonType][valueType] = reader;
 		}
 		
-		internal struct PropertyMetadata
-		{
-			public MemberInfo Info;
-			public bool IsField;
-			public Type Type;
-		}
-		
 		internal struct ArrayMetadata
 		{
 			public Type ElementType { get; set; }
@@ -649,7 +610,7 @@ namespace SineSignal.Ottoman.Serialization
 		{
 			public Type ElementType { get; set; }
 			public bool IsDictionary { get; set; }
-			public IDictionary<string, PropertyMetadata> Properties { get; set; }
+			public IDictionary<string, PropertyInfo> Properties { get; set; }
 		}
 	}
 }

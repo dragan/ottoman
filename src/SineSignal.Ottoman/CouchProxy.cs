@@ -1,3 +1,5 @@
+using System;
+
 using SineSignal.Ottoman.Commands;
 using SineSignal.Ottoman.Http;
 
@@ -6,6 +8,10 @@ namespace SineSignal.Ottoman
 	public class CouchProxy : ICouchProxy
 	{
 		public IRestClient RestClient { get; private set; }
+		
+		public CouchProxy(Uri serverLocation) : this(new RestClient(serverLocation))
+		{
+		}
 		
 		public CouchProxy(IRestClient restClient)
 		{

@@ -60,6 +60,8 @@
     <Compile Include="Serialization\JsonConvert.cs" />
     <Compile Include="Serialization\JsonSerializer.cs" />
     <Compile Include="Serialization\JsonMemberAttribute.cs" />
+    <Compile Include="CouchClient.cs" />
+    <Compile Include="Commands\ConnectToServerCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

@@ -1,8 +1,8 @@
 using System;
-using System.Dynamic;
 using System.Reflection;
 
 using NUnit.Framework;
+using NUnit.Framework.SyntaxHelpers;
 using SineSignal.Ottoman.Specs.Framework;
 
 namespace SineSignal.Ottoman.Specs
@@ -27,17 +27,13 @@ namespace SineSignal.Ottoman.Specs
 				return new CouchDocument(entity1, identityProperty);
 			}
 			
-			// TODO: Report Bug to Mono
 			[Test]
-			[Ignore("Bug in Mono runtime, after introducing a generic on ICouchProxy.Execute<TResult> this test broke by throwing a binding exception.")]
 			public void Should_copy_passed_in_entity()
 			{
-				dynamic sut = (dynamic)Sut;
-				
-				Assert.That(sut._id, Is.EqualTo(entity1.Id));
-				Assert.That(sut.Type, Is.EqualTo(entity1Type.Name));
-				Assert.That(sut.Name, Is.EqualTo(entity1.Name));
-				Assert.That(sut.Login, Is.EqualTo(entity1.Login));
+				Assert.That(Sut["_id"], Is.EqualTo(entity1.Id));
+				Assert.That(Sut["Type"], Is.EqualTo(entity1Type.Name));
+				Assert.That(Sut["Name"], Is.EqualTo(entity1.Name));
+				Assert.That(Sut["Login"], Is.EqualTo(entity1.Login));
 			}
 		}
 	}

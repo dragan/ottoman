@@ -4,6 +4,7 @@ using System.Reflection;
 
 using NSubstitute;
 using NUnit.Framework;
+using NUnit.Framework.SyntaxHelpers;
 using SineSignal.Ottoman.Specs.Framework;
 
 using SineSignal.Ottoman.Commands;

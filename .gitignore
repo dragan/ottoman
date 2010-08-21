@@ -8,3 +8,4 @@ _ReSharper.*
 *.cache
 *.userprefs
 *.pidb
+test-results

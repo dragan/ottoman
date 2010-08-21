@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using NSubstitute;
 using NUnit.Framework;
+using NUnit.Framework.SyntaxHelpers;
 using SineSignal.Ottoman.Specs.Framework;
 
 using SineSignal.Ottoman.Serialization;

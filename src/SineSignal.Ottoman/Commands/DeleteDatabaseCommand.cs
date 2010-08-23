@@ -3,11 +3,10 @@ using System.Net;
 
 using SineSignal.Ottoman.Exceptions;
 using SineSignal.Ottoman.Http;
-using SineSignal.Ottoman.Serialization;
 
 namespace SineSignal.Ottoman.Commands
 {
-	public class ConnectToServerCommand : ICouchCommand
+	public class DeleteDatabaseCommand : ICouchCommand
 	{
 		public string Route { get; private set; }
 		public string Operation { get; private set; }
@@ -15,21 +14,12 @@ namespace SineSignal.Ottoman.Commands
 		public HttpStatusCode SuccessStatusCode { get; private set; }
 		public Action<CommandErrorResult, UnexpectedHttpResponseException> OnErrorHandler { get { throw new NotImplementedException(); } }
 		
-		public ConnectToServerCommand()
+		public DeleteDatabaseCommand(string databaseName)
 		{
-			Route = "/";
-			Operation = HttpMethod.Get;
+			Route = databaseName;
+			Operation = HttpMethod.Delete;
 			Message = null;
 			SuccessStatusCode = HttpStatusCode.OK;
 		}
-	}
-	
-	public class ConnectToServerResult
-	{
-		[JsonMember("couchdb")]
-		public string Message { get; set; }
-		
-		[JsonMember("version")]
-		public string Version { get; set; }
 	}
 }

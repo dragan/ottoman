@@ -4,11 +4,11 @@ using SineSignal.Ottoman.Commands;
 
 namespace SineSignal.Ottoman
 {
-	public class CouchClient
+	public class CouchClient : ICouchClient
 	{
 		public string ServerVersion { get; private set; }
 		
-		private ICouchProxy CouchProxy { get; set; }
+		public ICouchProxy CouchProxy { get; private set; }
 		
 		private CouchClient(ICouchProxy couchProxy, string serverVersion)
 		{
@@ -16,7 +16,27 @@ namespace SineSignal.Ottoman
 			ServerVersion = serverVersion;
 		}
 		
-		public static CouchClient ConnectTo(string address)
+		public void CreateDatabase(string name)
+		{
+			var createDatabaseCommand = new CreateDatabaseCommand(name);
+			CouchProxy.Execute<CommandDefaultResult>(createDatabaseCommand);
+		}
+		
+		public ICouchDatabase GetDatabase(string name)
+		{
+			var getDatabaseCommand = new GetDatabaseCommand(name);
+			GetDatabaseResult result = CouchProxy.Execute<GetDatabaseResult>(getDatabaseCommand);
+			
+			return new CouchDatabase(this, result.DatabaseName);
+		}
+		
+		public void DeleteDatabase(string name)
+		{
+			var deleteDatabaseCommand = new DeleteDatabaseCommand(name);
+			CouchProxy.Execute<CommandDefaultResult>(deleteDatabaseCommand);
+		}
+		
+		public static ICouchClient ConnectTo(string address)
 		{
 			ICouchProxy couchProxy = new CouchProxy(new Uri(address));
 			ICouchCommand couchCommand = new ConnectToServerCommand();

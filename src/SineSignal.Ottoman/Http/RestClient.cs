@@ -1,5 +1,7 @@
 using System;
+using System.Net;
 
+using SineSignal.Ottoman.Exceptions;
 using SineSignal.Ottoman.Serialization;
 
 namespace SineSignal.Ottoman.Http
@@ -24,12 +26,19 @@ namespace SineSignal.Ottoman.Http
 			Serializer = serializer;
 		}
 		
-		public RestResponse<T> Process<T>(RestRequest restRequest)
+		public RestResponse<T> Process<T>(RestRequest restRequest, HttpStatusCode successStatusCode)
 		{
 			HttpRequest httpRequest = ConverToHttpRequestFrom(restRequest);
 			HttpResponse httpResponse = HttpClient.Send(httpRequest);
 			
-			return ConvertToRestResponseFrom<T>(httpResponse, restRequest);
+			if (httpResponse.StatusCode == successStatusCode)
+			{
+				return ConvertToRestResponseFrom<T>(httpResponse, restRequest);
+			}
+			else
+			{
+				throw new UnexpectedHttpResponseException(successStatusCode, httpResponse);
+			}
 		}
 		
 		private HttpRequest ConverToHttpRequestFrom(RestRequest restRequest)

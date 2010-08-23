@@ -47,6 +47,10 @@
       <DependentUpon>Developer_connects_to_server.feature</DependentUpon>
     </Compile>
     <Compile Include="StepDefinitions\DeveloperConnectsToServerSteps.cs" />
+    <Compile Include="Developer_administers_databases_on_server.feature.cs">
+      <DependentUpon>Developer_administers_databases_on_server.feature</DependentUpon>
+    </Compile>
+    <Compile Include="StepDefinitions\DeveloperAdministersDatabasesOnServer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -59,6 +63,10 @@
     <None Include="Developer_connects_to_server.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>Developer_connects_to_server.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Developer_administers_databases_on_server.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Developer_administers_databases_on_server.feature.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

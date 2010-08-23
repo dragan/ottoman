@@ -12,7 +12,7 @@ namespace SineSignal.Ottoman.AcceptanceSpecs
 	public class DeveloperConnectsToServerSteps
 	{
 		private string address;
-		private CouchClient couchClient;
+		private ICouchClient couchClient;
 		
 		[Given("I have a CouchDB instance running at http://127.0.0.1:5984")]
 		public void GivenIHaveACouchDBInstanceRunningAtHttp127_0_0_15984()

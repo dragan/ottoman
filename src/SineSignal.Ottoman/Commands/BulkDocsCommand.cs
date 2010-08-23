@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
+using SineSignal.Ottoman.Exceptions;
 using SineSignal.Ottoman.Http;
 
 namespace SineSignal.Ottoman.Commands
@@ -19,11 +21,15 @@ namespace SineSignal.Ottoman.Commands
 			get { return _message; }
 		}
 		
+		public HttpStatusCode SuccessStatusCode { get; private set; }
+		public Action<CommandErrorResult, UnexpectedHttpResponseException> OnErrorHandler { get { throw new NotImplementedException(); } }
+		
 		public BulkDocsCommand(string databaseName, BulkDocsMessage message)
 		{
 			Route = databaseName + "/_bulk_docs";
 			Operation = HttpMethod.Post;
 			_message = message;
+			SuccessStatusCode = HttpStatusCode.Created;
 		}
 	}
 	

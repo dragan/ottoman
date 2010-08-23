@@ -62,6 +62,14 @@
     <Compile Include="Serialization\JsonMemberAttribute.cs" />
     <Compile Include="CouchClient.cs" />
     <Compile Include="Commands\ConnectToServerCommand.cs" />
+    <Compile Include="Commands\CreateDatabaseCommand.cs" />
+    <Compile Include="ICouchClient.cs" />
+    <Compile Include="Commands\GetDatabaseCommand.cs" />
+    <Compile Include="CouchDatabase.cs" />
+    <Compile Include="Commands\DeleteDatabaseCommand.cs" />
+    <Compile Include="Exceptions\CannotGetDatabaseException.cs" />
+    <Compile Include="Exceptions\CouchException.cs" />
+    <Compile Include="Exceptions\UnexpectedHttpResponseException.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

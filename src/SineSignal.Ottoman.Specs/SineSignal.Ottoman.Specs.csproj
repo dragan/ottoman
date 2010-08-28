@@ -43,6 +43,7 @@
     <Compile Include="Serialization\JsonReaderSpecs\ReadingObjectsSpecs.cs" />
     <Compile Include="Serialization\JsonReaderSpecs\ReadingArraySpecs.cs" />
     <Compile Include="Serialization\JsonSerializerSpecs.cs" />
+    <Compile Include="CouchDocumentConventionSpecs.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SineSignal.Ottoman\SineSignal.Ottoman.csproj">

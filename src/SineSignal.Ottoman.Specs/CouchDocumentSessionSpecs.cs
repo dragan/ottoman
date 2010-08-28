@@ -22,7 +22,7 @@ namespace SineSignal.Ottoman.Specs
 			private PropertyInfo identityProperty;
 			private Type identityType;
 			private Guid id;
-			private IDocumentConvention documentConvention;
+			private ICouchDocumentConvention documentConvention;
 			private ICouchDatabase couchDatabase;
 			
 			protected override void Given()
@@ -33,12 +33,12 @@ namespace SineSignal.Ottoman.Specs
 				identityType = identityProperty.PropertyType;
 				id = Guid.NewGuid();
 				
-				documentConvention = Fake<IDocumentConvention>();
+				documentConvention = Fake<ICouchDocumentConvention>();
 				documentConvention.GetIdentityPropertyFor(entity1Type).Returns(identityProperty);
 				documentConvention.GenerateIdentityFor(identityType).Returns(id);
 				
 				couchDatabase = Fake<ICouchDatabase>();
-				couchDatabase.DocumentConvention.Returns(documentConvention);
+				couchDatabase.CouchDocumentConvention.Returns(documentConvention);
 			}
 			
 			public override CouchDocumentSession CreateSystemUnderTest()
@@ -83,7 +83,7 @@ namespace SineSignal.Ottoman.Specs
 			private Employee entity1;
 			private Type entity1Type;
 			private PropertyInfo identityProperty;
-			private IDocumentConvention documentConvention;
+			private ICouchDocumentConvention documentConvention;
 			private ICouchDatabase couchDatabase;
 			
 			protected override void Given()
@@ -93,11 +93,11 @@ namespace SineSignal.Ottoman.Specs
 				entity1Type = entity1.GetType();
 				identityProperty = entity1Type.GetProperty("Id");
 				
-				documentConvention = Fake<IDocumentConvention>();
+				documentConvention = Fake<ICouchDocumentConvention>();
 				documentConvention.GetIdentityPropertyFor(entity1Type).Returns(identityProperty);
 				
 				couchDatabase = Fake<ICouchDatabase>();
-				couchDatabase.DocumentConvention.Returns(documentConvention);
+				couchDatabase.CouchDocumentConvention.Returns(documentConvention);
 			}
 			
 			public override CouchDocumentSession CreateSystemUnderTest()
@@ -144,7 +144,7 @@ namespace SineSignal.Ottoman.Specs
 			private Type entity2Type;
 			private PropertyInfo identityProperty;
 			private NonUniqueEntityException thrownException;
-			private IDocumentConvention documentConvention;
+			private ICouchDocumentConvention documentConvention;
 			private ICouchDatabase couchDatabase;
 			
 			protected override void Given()
@@ -155,11 +155,11 @@ namespace SineSignal.Ottoman.Specs
 				entity2Type = entity2.GetType();
 				identityProperty = entity2Type.GetProperty("Id");
 				
-				documentConvention = Fake<IDocumentConvention>();
+				documentConvention = Fake<ICouchDocumentConvention>();
 				documentConvention.GetIdentityPropertyFor(entity2Type).Returns(identityProperty);
 				
 				couchDatabase = Fake<ICouchDatabase>();
-				couchDatabase.DocumentConvention.Returns(documentConvention);
+				couchDatabase.CouchDocumentConvention.Returns(documentConvention);
 			}
 			
 			public override CouchDocumentSession CreateSystemUnderTest()
@@ -196,7 +196,7 @@ namespace SineSignal.Ottoman.Specs
 			private PropertyInfo identityProperty;
 			private Type identityType;
 			private Guid id;
-			private IDocumentConvention documentConvention;
+			private ICouchDocumentConvention documentConvention;
 			private BulkDocsResult[] bulkDocsResults;
 			private ICouchProxy couchProxy;
 			private ICouchDatabase couchDatabase;
@@ -209,7 +209,7 @@ namespace SineSignal.Ottoman.Specs
 				identityType = identityProperty.PropertyType;
 				id = Guid.NewGuid();
 				
-				documentConvention = Fake<IDocumentConvention>();
+				documentConvention = Fake<ICouchDocumentConvention>();
 				documentConvention.GetIdentityPropertyFor(entity1Type).Returns(identityProperty);
 				documentConvention.GenerateIdentityFor(identityType).Returns(id);
 				
@@ -219,7 +219,7 @@ namespace SineSignal.Ottoman.Specs
 				couchProxy.Execute<BulkDocsResult[]>(Arg.Any<BulkDocsCommand>()).Returns(bulkDocsResults);
 				
 				couchDatabase = Fake<ICouchDatabase>();
-				couchDatabase.DocumentConvention.Returns(documentConvention);
+				couchDatabase.CouchDocumentConvention.Returns(documentConvention);
 				couchDatabase.Name.Returns("ottoman-test-database");
 				couchDatabase.CouchProxy.Returns(couchProxy);
 			}

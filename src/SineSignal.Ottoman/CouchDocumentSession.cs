@@ -25,7 +25,7 @@ namespace SineSignal.Ottoman
 		public void Store(object entity)
 		{
 			Type entityType = entity.GetType();
-			PropertyInfo identityProperty = CouchDatabase.DocumentConvention.GetIdentityPropertyFor(entityType);
+			PropertyInfo identityProperty = CouchDatabase.CouchDocumentConvention.GetIdentityPropertyFor(entityType);
 			
 			object id = null;
 			if (identityProperty != null)
@@ -34,7 +34,7 @@ namespace SineSignal.Ottoman
 				
 				if (id == null)
 				{
-					id = CouchDatabase.DocumentConvention.GenerateIdentityFor(identityProperty.PropertyType);
+					id = CouchDatabase.CouchDocumentConvention.GenerateIdentityFor(identityProperty.PropertyType);
 					identityProperty.SetValue(entity, id, null);
 				}
 			}
@@ -69,7 +69,7 @@ namespace SineSignal.Ottoman
 			var docs = new List<CouchDocument>();
 			foreach (object entity in IdentityMap.Values)
 			{
-				PropertyInfo identityProperty = CouchDatabase.DocumentConvention.GetIdentityPropertyFor(entity.GetType());
+				PropertyInfo identityProperty = CouchDatabase.CouchDocumentConvention.GetIdentityPropertyFor(entity.GetType());
 				var couchDocument = new CouchDocument(entity, identityProperty);
 				docs.Add(couchDocument);
 			}
@@ -90,10 +90,9 @@ namespace SineSignal.Ottoman
 			object id = identityProperty.GetValue(entity, null);
 			
 			Type propertyType = identityProperty.PropertyType;
-			if (propertyType == typeof(Guid))
+			if (propertyType == typeof(Guid) && (Guid)id == Guid.Empty)
 			{
-				if ((Guid)id == Guid.Empty)
-					id = null;
+				id = null;
 			}
 			
 			return id;

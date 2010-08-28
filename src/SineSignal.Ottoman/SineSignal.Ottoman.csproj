@@ -32,7 +32,6 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="CouchDocumentSession.cs" />
-    <Compile Include="IDocumentConvention.cs" />
     <Compile Include="Exceptions\NonUniqueEntityException.cs" />
     <Compile Include="Http\HttpClient.cs" />
     <Compile Include="Http\HttpRequest.cs" />
@@ -70,6 +69,10 @@
     <Compile Include="Exceptions\CannotGetDatabaseException.cs" />
     <Compile Include="Exceptions\CouchException.cs" />
     <Compile Include="Exceptions\UnexpectedHttpResponseException.cs" />
+    <Compile Include="ICouchDocumentConvention.cs" />
+    <Compile Include="Generators\IIdentityGenerator.cs" />
+    <Compile Include="Generators\GuidIdentityGenerator.cs" />
+    <Compile Include="CouchDocumentConvention.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -81,5 +84,6 @@
     <Folder Include="Http\" />
     <Folder Include="Commands\" />
     <Folder Include="Serialization\" />
+    <Folder Include="Generators\" />
   </ItemGroup>
 </Project>

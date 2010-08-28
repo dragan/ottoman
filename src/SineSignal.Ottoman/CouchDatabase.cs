@@ -11,17 +11,24 @@ namespace SineSignal.Ottoman
 			get { return CouchClient.CouchProxy; }
 		}
 		
-		public IDocumentConvention DocumentConvention
-		{
-			get { throw new NotImplementedException(); }
-		}
+		public ICouchDocumentConvention CouchDocumentConvention { get; private set; }
 		
 		public string Name { get; private set; }
 		
-		public CouchDatabase(CouchClient couchClient, string name)
+		public CouchDatabase(CouchClient couchClient, string name) : this(couchClient, name, new CouchDocumentConvention())
+		{
+		}
+		
+		public CouchDatabase(CouchClient couchClient, string name, ICouchDocumentConvention couchDocumentConvention)
 		{
 			CouchClient = couchClient;
 			Name = name;
+			CouchDocumentConvention = couchDocumentConvention;
+		}
+		
+		public ICouchDocumentSession OpenDocumentSession()
+		{
+			return new CouchDocumentSession(this);
 		}
 	}
 }

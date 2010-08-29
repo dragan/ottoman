@@ -35,8 +35,17 @@ namespace SineSignal.Ottoman
 			}
 			catch (UnexpectedHttpResponseException e)
 			{
-				var errorResult = Serializer.Deserialize<CommandErrorResult>(e.RawResponse.Content);
-				couchCommand.OnErrorHandler(errorResult, e);
+				CommandErrorResult errorResult;
+				if (!String.IsNullOrEmpty(e.RawResponse.Content))
+				{
+					errorResult = Serializer.Deserialize<CommandErrorResult>(e.RawResponse.Content);
+				}
+				else
+				{
+					errorResult = new CommandErrorResult { Error = "Unexpected Exception", Reason = e.RawResponse.Error.Message };
+				}
+				
+				couchCommand.HandleError(RestClient.BaseUri.ToString(), errorResult, e);
 			}
 			
 			return restResponse.ContentDeserialized;

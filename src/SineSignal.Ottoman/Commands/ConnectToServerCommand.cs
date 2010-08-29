@@ -13,7 +13,6 @@ namespace SineSignal.Ottoman.Commands
 		public string Operation { get; private set; }
 		public object Message { get; private set; }
 		public HttpStatusCode SuccessStatusCode { get; private set; }
-		public Action<CommandErrorResult, UnexpectedHttpResponseException> OnErrorHandler { get { throw new NotImplementedException(); } }
 		
 		public ConnectToServerCommand()
 		{
@@ -21,6 +20,11 @@ namespace SineSignal.Ottoman.Commands
 			Operation = HttpMethod.Get;
 			Message = null;
 			SuccessStatusCode = HttpStatusCode.OK;
+		}
+		
+		public void HandleError(string serverAddress, CommandErrorResult errorResult, UnexpectedHttpResponseException innerException)
+		{
+			throw new CannotConnectToServerException(serverAddress, errorResult, innerException);
 		}
 	}
 	

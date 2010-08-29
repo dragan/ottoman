@@ -8,3 +8,8 @@ Scenario: Connect to server
 	When I call ConnectTo on CouchClient
 	Then the result should be an instance of CouchClient
 	And ServerVersion should not be null or empty
+
+Scenario: Cannot connect to server
+	Given I do not have a CouchDB instance running at http://127.0.0.1:5985
+	When I call ConnectTo on CouchClient
+	Then the result should be a CannotConnectToServerException

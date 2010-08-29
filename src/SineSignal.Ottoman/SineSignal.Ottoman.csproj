@@ -73,6 +73,9 @@
     <Compile Include="Generators\IIdentityGenerator.cs" />
     <Compile Include="Generators\GuidIdentityGenerator.cs" />
     <Compile Include="CouchDocumentConvention.cs" />
+    <Compile Include="Exceptions\CannotConnectToServerException.cs" />
+    <Compile Include="Exceptions\CannotCreateDatabaseException.cs" />
+    <Compile Include="Exceptions\CannotDeleteDatabaseException.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

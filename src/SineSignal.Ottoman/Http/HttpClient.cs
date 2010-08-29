@@ -72,7 +72,14 @@ namespace SineSignal.Ottoman.Http
 			}
 			catch (WebException webException)
 			{
-				httpWebResponse = webException.Response as HttpWebResponse;
+				if (webException.InnerException is System.Net.Sockets.SocketException)
+				{
+					throw;
+				}
+				else
+				{
+					httpWebResponse = webException.Response as HttpWebResponse;
+				}
 			}
 			
 			return httpWebResponse;

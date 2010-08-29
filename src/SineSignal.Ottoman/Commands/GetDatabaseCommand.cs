@@ -13,7 +13,6 @@ namespace SineSignal.Ottoman.Commands
 		public string Operation { get; private set; }
 		public object Message { get; private set; }
 		public HttpStatusCode SuccessStatusCode { get; private set; }
-		public Action<CommandErrorResult, UnexpectedHttpResponseException> OnErrorHandler { get; private set; }
 		
 		private string DatabaseName { get; set; }
 		
@@ -25,10 +24,9 @@ namespace SineSignal.Ottoman.Commands
 			Operation = HttpMethod.Get;
 			Message = null;
 			SuccessStatusCode = HttpStatusCode.OK;
-			OnErrorHandler = OnError;
 		}
 		
-		private void OnError(CommandErrorResult errorResult, UnexpectedHttpResponseException innerException)
+		public void HandleError(string serverAddress, CommandErrorResult errorResult, UnexpectedHttpResponseException innerException)
 		{
 			throw new CannotGetDatabaseException(DatabaseName, errorResult, innerException);
 		}

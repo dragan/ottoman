@@ -91,6 +91,40 @@ testRunner.Then("the result should be the database was deleted on the server");
 #line hidden
             testRunner.CollectScenarioErrors();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Cannot create database")]
+        public virtual void CannotCreateDatabase()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Cannot create database", ((string[])(null)));
+#line 18
+this.ScenarioSetup(scenarioInfo);
+#line 19
+testRunner.Given("I have an invalid name for a database");
+#line 20
+testRunner.When("I call CreateDatabase on CouchClient");
+#line 21
+testRunner.Then("the result should be a CannotCreateDatabaseException");
+#line hidden
+            testRunner.CollectScenarioErrors();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Cannot delete database")]
+        public virtual void CannotDeleteDatabase()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Cannot delete database", ((string[])(null)));
+#line 23
+this.ScenarioSetup(scenarioInfo);
+#line 24
+testRunner.Given("I have a name for a database that doesn't exist on the server");
+#line 25
+testRunner.When("I call DeleteDatabase on CouchClient");
+#line 26
+testRunner.Then("the result should be a CannotDeleteDatabaseException");
+#line hidden
+            testRunner.CollectScenarioErrors();
+        }
     }
 }
 #endregion

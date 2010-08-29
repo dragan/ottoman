@@ -14,3 +14,13 @@ Scenario: Create database
 Scenario: Delete database
 	When I call DeleteDatabase on CouchClient
 	Then the result should be the database was deleted on the server
+
+Scenario: Cannot create database
+	Given I have an invalid name for a database
+	When I call CreateDatabase on CouchClient
+	Then the result should be a CannotCreateDatabaseException
+
+Scenario: Cannot delete database
+	Given I have a name for a database that doesn't exist on the server
+	When I call DeleteDatabase on CouchClient
+	Then the result should be a CannotDeleteDatabaseException

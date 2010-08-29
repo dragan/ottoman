@@ -13,7 +13,7 @@ namespace SineSignal.Ottoman.Commands
 		string Operation { get; }
 		object Message { get; }
 		HttpStatusCode SuccessStatusCode { get; }
-		Action<CommandErrorResult, UnexpectedHttpResponseException> OnErrorHandler { get; }
+		void HandleError(string serverAddress, CommandErrorResult errorResult, UnexpectedHttpResponseException innerException);
 	}
 	
 	public class CommandDefaultResult

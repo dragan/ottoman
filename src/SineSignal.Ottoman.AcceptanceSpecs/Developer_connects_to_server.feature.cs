@@ -69,6 +69,23 @@ testRunner.And("ServerVersion should not be null or empty");
 #line hidden
             testRunner.CollectScenarioErrors();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Cannot connect to server")]
+        public virtual void CannotConnectToServer()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Cannot connect to server", ((string[])(null)));
+#line 12
+this.ScenarioSetup(scenarioInfo);
+#line 13
+testRunner.Given("I do not have a CouchDB instance running at http://127.0.0.1:5985");
+#line 14
+testRunner.When("I call ConnectTo on CouchClient");
+#line 15
+testRunner.Then("the result should be a CannotConnectToServerException");
+#line hidden
+            testRunner.CollectScenarioErrors();
+        }
     }
 }
 #endregion

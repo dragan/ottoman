@@ -50,7 +50,7 @@
     <Compile Include="Developer_administers_databases_on_server.feature.cs">
       <DependentUpon>Developer_administers_databases_on_server.feature</DependentUpon>
     </Compile>
-    <Compile Include="StepDefinitions\DeveloperAdministersDatabasesOnServer.cs" />
+    <Compile Include="StepDefinitions\DeveloperAdministersDatabasesOnServerSteps.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

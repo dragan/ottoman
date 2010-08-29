@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 
 namespace SineSignal.Ottoman.Http
@@ -72,7 +73,7 @@ namespace SineSignal.Ottoman.Http
 			}
 			catch (WebException webException)
 			{
-				if (webException.InnerException is System.Net.Sockets.SocketException)
+				if (webException.InnerException is SocketException)
 				{
 					throw;
 				}

@@ -60,5 +60,8 @@ namespace SineSignal.Ottoman.Commands
 		
 		[JsonMember("disk_format_version")]
 		public int DiskFormatVersion { get; set; }
+		
+		[JsonMember("committed_update_seq")]
+		public int CommittedUpdateSequence { get; set; }
 	}
 }

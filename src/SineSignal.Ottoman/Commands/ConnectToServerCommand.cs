@@ -7,7 +7,7 @@ using SineSignal.Ottoman.Serialization;
 
 namespace SineSignal.Ottoman.Commands
 {
-	public class ConnectToServerCommand : ICouchCommand
+	internal class ConnectToServerCommand : ICouchCommand
 	{
 		public string Route { get; private set; }
 		public string Operation { get; private set; }
@@ -28,7 +28,7 @@ namespace SineSignal.Ottoman.Commands
 		}
 	}
 	
-	public class ConnectToServerResult
+	internal class ConnectToServerResult
 	{
 		[JsonMember("couchdb")]
 		public string Message { get; set; }

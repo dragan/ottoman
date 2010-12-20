@@ -7,7 +7,7 @@ using SineSignal.Ottoman.Serialization;
 
 namespace SineSignal.Ottoman.Commands
 {
-	public class GetDatabaseCommand : ICouchCommand
+	internal class GetDatabaseCommand : ICouchCommand
 	{
 		public string Route { get; private set; }
 		public string Operation { get; private set; }
@@ -32,7 +32,7 @@ namespace SineSignal.Ottoman.Commands
 		}
 	}
 	
-	public class GetDatabaseResult
+	internal class GetDatabaseResult
 	{
 		[JsonMember("db_name")]
 		public string DatabaseName { get; set; }

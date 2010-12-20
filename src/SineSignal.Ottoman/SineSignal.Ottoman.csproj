@@ -76,6 +76,7 @@
     <Compile Include="Exceptions\CannotConnectToServerException.cs" />
     <Compile Include="Exceptions\CannotCreateDatabaseException.cs" />
     <Compile Include="Exceptions\CannotDeleteDatabaseException.cs" />
+    <Compile Include="Commands\GetDocumentCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

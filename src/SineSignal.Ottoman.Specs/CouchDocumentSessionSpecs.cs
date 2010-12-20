@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Reflection;
 
 using NSubstitute;
@@ -252,6 +253,77 @@ namespace SineSignal.Ottoman.Specs
 				}));
 			}
 		}
+		
+		public class When_loading_a_simple_entity : ConcernFor<CouchDocumentSession>
+		{
+			private Guid documentId;
+			private Employee entity1;
+			private Type entity1Type;
+			private PropertyInfo identityProperty;
+			private ICouchDocumentConvention documentConvention;
+			private ICouchProxy couchProxy;
+			private ICouchDatabase couchDatabase;
+			
+			protected override void Given()
+			{
+				documentId = Guid.NewGuid();
+				entity1Type = typeof(Employee);
+				identityProperty = entity1Type.GetProperty("Id");
+				
+				documentConvention = Fake<ICouchDocumentConvention>();
+				documentConvention.GetIdentityPropertyFor(entity1Type).Returns(identityProperty);
+				
+				var couchDocument = new CouchDocument();
+				couchDocument.Add("_id", documentId.ToString());
+				couchDocument.Add("_rev", "123456");
+				couchDocument.Add("Type", entity1Type.Name);
+				couchDocument.Add("Name", "Bob");
+				couchDocument.Add("Login", "boblogin");
+				
+				couchProxy = Fake<ICouchProxy>();
+				couchProxy.Execute<CouchDocument>(Arg.Any<GetDocumentCommand>()).Returns(couchDocument);
+				
+				couchDatabase = Fake<ICouchDatabase>();
+				couchDatabase.Name.Returns("ottoman-test-database");
+				couchDatabase.CouchProxy.Returns(couchProxy);
+				couchDatabase.CouchDocumentConvention.Returns(documentConvention);
+			}
+			
+			public override CouchDocumentSession CreateSystemUnderTest()
+			{
+				return new CouchDocumentSession(couchDatabase);
+			}
+			
+			protected override void When()
+			{
+				entity1 = Sut.Load<Employee>(documentId.ToString());
+			}
+			
+			[Test]
+			public void Should_execute_get_document_command_with_couch_proxy()
+			{
+				couchProxy.Received().Execute<CouchDocument>(Arg.Is<GetDocumentCommand>(c => {
+					return c.Route == couchDatabase.Name + "/" + documentId.ToString() && 
+						   c.Operation == HttpMethod.Get && 
+						   c.Message == null && 
+						   c.SuccessStatusCode == HttpStatusCode.OK;
+				}));
+			}
+			
+			[Test]
+			public void Should_call_get_identity_property()
+			{
+				documentConvention.Received().GetIdentityPropertyFor(entity1Type);
+			}
+			
+			[Test]
+			public void Should_return_populated_entity()
+			{
+				Assert.That(entity1.Id, Is.EqualTo(documentId));
+				Assert.That(entity1.Name, Is.EqualTo("Bob"));
+				Assert.That(entity1.Login, Is.EqualTo("boblogin"));
+			}
+		}
 	}
 	
 	public class Employee
@@ -259,5 +331,22 @@ namespace SineSignal.Ottoman.Specs
 		public Guid Id { get; set; }
 		public string Name { get; set; }
 		public string Login { get; set; }
+		
+		public override bool Equals (object obj)
+		{
+			if (obj == null)
+				return false;
+			
+			Employee employee = obj as Employee;
+			if (employee == null)
+				return false;
+			
+			return (this.Id == employee.Id) && (this.Name == employee.Name) && (this.Login == employee.Login);
+		}
+		
+		public override int GetHashCode ()
+		{
+			return Id.GetHashCode() ^ Name.GetHashCode() ^ Login.GetHashCode();
+		}
 	}
 }

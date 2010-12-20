@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 using SineSignal.Ottoman.Commands;
@@ -13,13 +14,13 @@ namespace SineSignal.Ottoman
 		public ICouchDatabase CouchDatabase { get; private set; }
 
 		private Dictionary<string, object> IdentityMap { get; set; }
-		private Dictionary<string, DocumentMetadata> MetaDataMap { get; set; }
+		private Dictionary<object, EntityMetadata> EntityMetadataMap { get; set; }
 		
 		public CouchDocumentSession(ICouchDatabase couchDatabase)
 		{
 			CouchDatabase = couchDatabase;
 			IdentityMap = new Dictionary<string, object>();
-			MetaDataMap = new Dictionary<string, DocumentMetadata>();
+			EntityMetadataMap = new Dictionary<object, EntityMetadata>();
 		}
 		
 		public void Store(object entity)
@@ -49,6 +50,8 @@ namespace SineSignal.Ottoman
 					throw new NonUniqueEntityException("Attempted to associate a different entity with id '" + id + "'.");
 				}
 				
+				var entityMetadata = new EntityMetadata{ Key = id.ToString(), Revision = String.Empty, OriginalEntity = entity };
+				EntityMetadataMap.Add(entity, entityMetadata);
 				IdentityMap[id.ToString()] = entity;
 			}
 		}
@@ -67,21 +70,32 @@ namespace SineSignal.Ottoman
 		public void SaveChanges()
 		{
 			var docs = new List<CouchDocument>();
-			foreach (object entity in IdentityMap.Values)
+			var entities = new List<object>();
+			foreach (var entity in EntityMetadataMap.Where(pair => IsEntityDirty(pair.Key, pair.Value)))
 			{
-				PropertyInfo identityProperty = CouchDatabase.CouchDocumentConvention.GetIdentityPropertyFor(entity.GetType());
-				var couchDocument = new CouchDocument(entity, identityProperty);
-				docs.Add(couchDocument);
+				Type entityType = entity.Key.GetType();
+				PropertyInfo identityProperty = CouchDatabase.CouchDocumentConvention.GetIdentityPropertyFor(entityType);
+				docs.Add(CouchDocument.Dehydrate(entity.Key, identityProperty, entity.Value.Revision));
+				entities.Add(entity.Key);
 			}
 			
 			var bulkDocsMessage = new BulkDocsMessage(docs);
 			var bulkDocsCommand = new BulkDocsCommand(CouchDatabase.Name, bulkDocsMessage);
+			
 			BulkDocsResult[] results = CouchDatabase.CouchProxy.Execute<BulkDocsResult[]>(bulkDocsCommand);
 			
 			for (int index = 0; index < results.Length; index++)
 			{
 				BulkDocsResult result = results[index];
-				MetaDataMap[result.Id] = new DocumentMetadata { Id = result.Id, Rev = result.Rev };
+				object entity = entities[index];
+				
+				EntityMetadata entityMetadata;
+				if (EntityMetadataMap.TryGetValue(entity, out entityMetadata) == false)
+					continue;
+				
+				IdentityMap[result.Id] = entity;
+				entityMetadata.Revision = result.Rev;
+				entityMetadata.OriginalEntity = entity;
 			}
 		}
 		
@@ -98,10 +112,16 @@ namespace SineSignal.Ottoman
 			return id;
 		}
 		
-		public class DocumentMetadata
+		private bool IsEntityDirty(object entity, EntityMetadata entityMetadata)
 		{
-			public string Id { get; set; }
-			public string Rev { get; set; }
+			return true;
+		}
+		
+		private class EntityMetadata
+		{
+			public string Key { get; set; }
+			public string Revision { get; set; }
+			public object OriginalEntity { get; set; }
 		}
 	}
 }

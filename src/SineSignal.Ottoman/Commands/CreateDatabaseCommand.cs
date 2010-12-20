@@ -6,7 +6,7 @@ using SineSignal.Ottoman.Http;
 
 namespace SineSignal.Ottoman.Commands
 {
-	public class CreateDatabaseCommand : ICouchCommand
+	internal class CreateDatabaseCommand : ICouchCommand
 	{
 		public string Route { get; private set; }
 		public string Operation { get; private set; }

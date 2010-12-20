@@ -9,7 +9,7 @@ using SineSignal.Ottoman.Serialization;
 
 namespace SineSignal.Ottoman.Commands
 {
-	public class BulkDocsCommand : ICouchCommand
+	internal class BulkDocsCommand : ICouchCommand
 	{
 		private readonly BulkDocsMessage _message;
 		
@@ -38,7 +38,7 @@ namespace SineSignal.Ottoman.Commands
 		}
 	}
 	
-	public class BulkDocsMessage
+	internal class BulkDocsMessage
 	{
 		[JsonMember("non_atomic")]
 		public bool NonAtomic { get; private set; }
@@ -61,7 +61,7 @@ namespace SineSignal.Ottoman.Commands
 		}
 	}
 	
-	public class BulkDocsResult
+	internal class BulkDocsResult
 	{
 		[JsonMember("id")]
 		public string Id { get; set; }

@@ -324,6 +324,75 @@ namespace SineSignal.Ottoman.Specs
 				Assert.That(entity1.Login, Is.EqualTo("boblogin"));
 			}
 		}
+		
+		public class When_deleting_an_entity : ConcernFor<CouchDocumentSession>
+		{
+			private Guid documentId;
+			private Employee entity1;
+			private Type entity1Type;
+			private PropertyInfo identityProperty;
+			private BulkDocsResult[] bulkDocsResults;
+			private ICouchDocumentConvention documentConvention;
+			private ICouchProxy couchProxy;
+			private ICouchDatabase couchDatabase;
+			
+			protected override void Given()
+			{
+				documentId = Guid.NewGuid();
+				entity1Type = typeof(Employee);
+				identityProperty = entity1Type.GetProperty("Id");
+				
+				documentConvention = Fake<ICouchDocumentConvention>();
+				documentConvention.GetIdentityPropertyFor(entity1Type).Returns(identityProperty);
+				
+				var couchDocument = new CouchDocument();
+				couchDocument.Add("_id", documentId.ToString());
+				couchDocument.Add("_rev", "123456");
+				couchDocument.Add("Type", entity1Type.Name);
+				couchDocument.Add("Name", "Bob");
+				couchDocument.Add("Login", "boblogin");
+				
+				bulkDocsResults = new BulkDocsResult[1];
+				bulkDocsResults[0] = new BulkDocsResult { Id = documentId.ToString(), Rev = "123456" };
+				couchProxy = Fake<ICouchProxy>();
+				couchProxy.Execute<CouchDocument>(Arg.Any<GetDocumentCommand>()).Returns(couchDocument);
+				couchProxy.Execute<BulkDocsResult[]>(Arg.Any<BulkDocsCommand>()).Returns(bulkDocsResults);
+				
+				couchDatabase = Fake<ICouchDatabase>();
+				couchDatabase.Name.Returns("ottoman-test-database");
+				couchDatabase.CouchProxy.Returns(couchProxy);
+				couchDatabase.CouchDocumentConvention.Returns(documentConvention);
+			}
+			
+			public override CouchDocumentSession CreateSystemUnderTest()
+			{
+				return new CouchDocumentSession(couchDatabase);
+			}
+			
+			protected override void When()
+			{
+				entity1 = Sut.Load<Employee>(documentId.ToString());
+				Sut.Delete<Employee>(entity1);
+				Sut.SaveChanges();
+			}
+			
+			[Test]
+			public void Should_call_get_identity_property()
+			{
+				documentConvention.Received().GetIdentityPropertyFor(entity1Type);
+			}
+			
+			[Test]
+			public void Should_execute_bulk_docs_command_with_couch_proxy()
+			{
+				couchProxy.Received().Execute<BulkDocsResult[]>(Arg.Is<BulkDocsCommand>(c => {
+					var message = (BulkDocsMessage)c.Message;
+					return c.Route == couchDatabase.Name + "/_bulk_docs" && 
+						   c.Operation == HttpMethod.Post && 
+						   (message.NonAtomic == false && message.AllOrNothing == false && message.Docs.Length == 1);
+				}));
+			}
+		}
 	}
 	
 	public class Employee

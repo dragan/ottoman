@@ -4,6 +4,7 @@ namespace SineSignal.Ottoman
 	{
 		void Store(object entity);
 		T Load<T>(string id) where T : new();
+		void Delete<T>(T entity);
 		void SaveChanges();
 	}
 }

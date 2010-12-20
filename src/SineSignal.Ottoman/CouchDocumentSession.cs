@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 using SineSignal.Ottoman.Commands;
 using SineSignal.Ottoman.Exceptions;
@@ -15,12 +18,14 @@ namespace SineSignal.Ottoman
 
 		private Dictionary<string, object> IdentityMap { get; set; }
 		private Dictionary<object, EntityMetadata> EntityMetadataMap { get; set; }
+		private HashSet<object> DeletedEntities { get; set; }
 		
 		public CouchDocumentSession(ICouchDatabase couchDatabase)
 		{
 			CouchDatabase = couchDatabase;
 			IdentityMap = new Dictionary<string, object>();
 			EntityMetadataMap = new Dictionary<object, EntityMetadata>();
+			DeletedEntities = new HashSet<object>();
 		}
 		
 		public void Store(object entity)
@@ -70,15 +75,41 @@ namespace SineSignal.Ottoman
 			return StalkEntity<T>(couchDocument);
 		}
 		
+		public void Delete<T>(T entity)
+		{
+			if (EntityMetadataMap.ContainsKey(entity) == false)
+				throw new InvalidOperationException(String.Format("{0} is not associated with the current couch document session, cannot delete unknown entity.", entity));
+			
+			DeletedEntities.Add(entity);
+		}
+		
 		public void SaveChanges()
 		{
 			var docs = new List<CouchDocument>();
 			var entities = new List<object>();
+			
+			foreach (var entity in DeletedEntities)
+			{
+				EntityMetadata entityMetadata;
+				if (EntityMetadataMap.TryGetValue(entity, out entityMetadata))
+				{
+					EntityMetadataMap.Remove(entity);
+					IdentityMap.Remove(entityMetadata.Key);
+					
+					Type entityType = entity.GetType();
+					PropertyInfo identityProperty = CouchDatabase.CouchDocumentConvention.GetIdentityPropertyFor(entityType);
+					
+					docs.Add(CouchDocument.Dehydrate(entity, identityProperty, entityMetadata.Revision, true));
+					entities.Add(entity);
+				}
+			}
+			DeletedEntities.Clear();
+			
 			foreach (var entity in EntityMetadataMap.Where(pair => IsEntityDirty(pair.Key, pair.Value)))
 			{
 				Type entityType = entity.Key.GetType();
 				PropertyInfo identityProperty = CouchDatabase.CouchDocumentConvention.GetIdentityPropertyFor(entityType);
-				docs.Add(CouchDocument.Dehydrate(entity.Key, identityProperty, entity.Value.Revision));
+				docs.Add(CouchDocument.Dehydrate(entity.Key, identityProperty, entity.Value.Revision, false));
 				entities.Add(entity.Key);
 			}
 			
@@ -120,7 +151,9 @@ namespace SineSignal.Ottoman
 		
 		private bool IsEntityDirty(object entity, EntityMetadata entityMetadata)
 		{
-			return entity.Equals(entityMetadata.OriginalEntity) == false;
+			// TODO: Need to find a better way to tell if the entity is dirty
+			//return entity.Equals(entityMetadata.OriginalEntity) == false;
+			return true;
 		}
 		
 		private T StalkEntity<T>(CouchDocument couchDocument) where T : new()

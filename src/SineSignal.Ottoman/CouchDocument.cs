@@ -7,24 +7,33 @@ namespace SineSignal.Ottoman
 {
 	internal class CouchDocument : Dictionary<string, object>, IDictionary<string, object>
 	{
-		public static CouchDocument Dehydrate(object entity, PropertyInfo identityProperty, string revision)
+		public static CouchDocument Dehydrate(object entity, PropertyInfo identityProperty, string revision, bool delete)
 		{
 			var couchDocument = new CouchDocument();
 			var entityType = entity.GetType();
 			
-			couchDocument["Type"] = entityType.Name;
-			
-			if (revision != String.Empty)
-				couchDocument["_rev"] = revision;
-			
-			foreach (PropertyInfo property in entityType.GetProperties().Where(p => p.CanRead))
+			if (delete)
 			{
-				var key = property.Name;
-				if (key == identityProperty.Name)
-					key = "_id";
+				couchDocument["_id"] = entityType.GetProperty(identityProperty.Name).GetValue(entity, null);
+				couchDocument["_rev"] = revision;
+				couchDocument["_deleted"] = true;
+			}
+			else
+			{
+				couchDocument["Type"] = entityType.Name;
 				
-				var propertyValue = property.GetValue(entity, null);
-				couchDocument[key] = propertyValue;
+				if (revision != String.Empty)
+					couchDocument["_rev"] = revision;
+				
+				foreach (PropertyInfo property in entityType.GetProperties().Where(p => p.CanRead))
+				{
+					var key = property.Name;
+					if (key == identityProperty.Name)
+						key = "_id";
+					
+					var propertyValue = property.GetValue(entity, null);
+					couchDocument[key] = propertyValue;
+				}
 			}
 			
 			return couchDocument;

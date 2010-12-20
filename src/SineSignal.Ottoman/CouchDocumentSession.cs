@@ -50,13 +50,13 @@ namespace SineSignal.Ottoman
 					throw new NonUniqueEntityException("Attempted to associate a different entity with id '" + id + "'.");
 				}
 				
-				var entityMetadata = new EntityMetadata{ Key = id.ToString(), Revision = String.Empty, OriginalEntity = entity };
+				var entityMetadata = new EntityMetadata{ Key = id.ToString(), Revision = String.Empty };
 				EntityMetadataMap.Add(entity, entityMetadata);
 				IdentityMap[id.ToString()] = entity;
 			}
 		}
 		
-		public T Load<T>(string id)
+		public T Load<T>(string id) where T : new()
 		{
 			object existingEntity;
 		    if(IdentityMap.TryGetValue(id, out existingEntity))
@@ -64,7 +64,10 @@ namespace SineSignal.Ottoman
 		        return (T)existingEntity;
 		    }
 			
-			return default(T);
+			var getDocumentCommand = new GetDocumentCommand(CouchDatabase.Name, id);
+			CouchDocument couchDocument = CouchDatabase.CouchProxy.Execute<CouchDocument>(getDocumentCommand);
+			
+			return StalkEntity<T>(couchDocument);
 		}
 		
 		public void SaveChanges()
@@ -78,6 +81,9 @@ namespace SineSignal.Ottoman
 				docs.Add(CouchDocument.Dehydrate(entity.Key, identityProperty, entity.Value.Revision));
 				entities.Add(entity.Key);
 			}
+			
+			if (docs.Count == 0 && entities.Count == 0)
+				return;
 			
 			var bulkDocsMessage = new BulkDocsMessage(docs);
 			var bulkDocsCommand = new BulkDocsCommand(CouchDatabase.Name, bulkDocsMessage);
@@ -114,7 +120,25 @@ namespace SineSignal.Ottoman
 		
 		private bool IsEntityDirty(object entity, EntityMetadata entityMetadata)
 		{
-			return true;
+			return entity.Equals(entityMetadata.OriginalEntity) == false;
+		}
+		
+		private T StalkEntity<T>(CouchDocument couchDocument) where T : new()
+		{
+			PropertyInfo identityProperty = CouchDatabase.CouchDocumentConvention.GetIdentityPropertyFor(typeof(T));
+			T entity = couchDocument.Hydrate<T>(identityProperty);
+			
+			EntityMetadata entityMetadata = new EntityMetadata
+			{
+				Key = couchDocument["_id"].ToString(),
+				Revision = couchDocument["_rev"].ToString(),
+				OriginalEntity = entity
+			};
+			
+			EntityMetadataMap[entity] = entityMetadata;
+			IdentityMap[entityMetadata.Key] = entity;
+			
+			return entity;
 		}
 		
 		private class EntityMetadata

@@ -29,5 +29,42 @@ namespace SineSignal.Ottoman
 			
 			return couchDocument;
 		}
+		
+		public T Hydrate<T>(PropertyInfo identityProperty) where T : new()
+		{
+			var instance = new T();
+			var instanceType = instance.GetType();
+			
+			foreach (KeyValuePair<string, object> pair in this)
+			{
+				if (pair.Key == "_rev")
+					continue;
+				
+				if (pair.Key == "Type")
+					continue;
+				
+				PropertyInfo property;
+				
+				if (pair.Key == "_id")
+				{
+					property = instanceType.GetProperty(identityProperty.Name);
+				}
+				else
+				{
+					property = instanceType.GetProperty(pair.Key);
+				}
+				
+				if (property.PropertyType == typeof(Guid))
+				{
+					property.SetValue(instance, new Guid(pair.Value.ToString()), null);
+				}
+				else
+				{
+					property.SetValue(instance, pair.Value, null);
+				}
+			}
+			
+			return instance;
+		}
 	}
 }

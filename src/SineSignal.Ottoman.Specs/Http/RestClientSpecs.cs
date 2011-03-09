@@ -84,32 +84,26 @@ namespace SineSignal.Ottoman.Specs.Http
 			[Test]
 			public void Should_call_serialize_on_serializer_with_the_payload()
 			{
-				serializer.Received().Serialize(Arg.Is<Employee>(e => {
-					return e.Id == Guid.Empty && 
-						   e.Name == "Bob" && 
-						   e.Login == "boblogin";
-				}));
+				serializer.Received().Serialize(
+					Arg.Is<Employee>(e => e.Id == Guid.Empty && e.Name == "Bob" && e.Login == "boblogin"));
 			}
 			
 			[Test]
 			public void Should_call_send_on_http_client_with_generated_http_request()
 			{
-				httpClient.Received().Send(Arg.Is<HttpRequest>(h => {
-					return h.Url == new Uri(baseUri.ToString() + restRequest.Path) && 
+				httpClient.Received().Send(
+					Arg.Is<HttpRequest>(h => h.Url == new Uri(baseUri.ToString() + restRequest.Path) && 
 						   h.Accept == acceptType && 
 						   h.Method == restRequest.Method && 
 						   h.ContentType == requestContentType && 
 						   h.Content == requestContent && 
-						   h.ContentLength == requestContent.Length;
-				}));
+						   h.ContentLength == requestContent.Length));
 			}
 			
 			[Test]
 			public void Should_call_deserialize_on_serializer_with_content_of_response()
 			{
-				serializer.Received().Deserialize<ResultStub>(Arg.Is<string>(s => {
-					return s == responseContent;
-				}));
+				serializer.Received().Deserialize<ResultStub>(Arg.Is<string>(s => s == responseContent));
 			}
 			
 			[Test]
@@ -164,22 +158,20 @@ namespace SineSignal.Ottoman.Specs.Http
 			[Test]
 			public void Should_call_send_on_http_client_with_generated_http_request()
 			{
-				httpClient.Received().Send(Arg.Is<HttpRequest>(h => {
-					return h.Url == new Uri(baseUri.ToString() + restRequest.Path) && 
+				httpClient.Received().Send(
+					Arg.Is<HttpRequest>(h => h.Url == new Uri(baseUri.ToString() + restRequest.Path) && 
 						   h.Accept == responseContentType && 
 						   h.Method == restRequest.Method && 
 						   h.ContentType == requestContentType && 
 						   h.Content == requestContent && 
-						   h.ContentLength == requestContent.Length;
-				}));
+						   h.ContentLength == requestContent.Length
+				));
 			}
 			
 			[Test]
 			public void Should_call_deserialize_on_serializer_with_content_of_response()
 			{
-				serializer.Received().Deserialize<ResultStub>(Arg.Is<string>(s => {
-					return s == responseContent;
-				}));
+				serializer.Received().Deserialize<ResultStub>(Arg.Is<string>(s => s == responseContent));
 			}
 			
 			[Test]
@@ -234,22 +226,20 @@ namespace SineSignal.Ottoman.Specs.Http
 			[Test]
 			public void Should_call_send_on_http_client_with_generated_http_request()
 			{
-				httpClient.Received().Send(Arg.Is<HttpRequest>(h => {
-					return h.Url == new Uri(baseUri.ToString() + restRequest.Path) && 
+				httpClient.Received().Send(
+					Arg.Is<HttpRequest>(h => h.Url == new Uri(baseUri.ToString() + restRequest.Path) && 
 						   h.Accept == responseContentType && 
 						   h.Method == restRequest.Method && 
 						   h.ContentType == requestContentType && 
 						   h.Content == requestContent && 
-						   h.ContentLength == requestContent.Length;
-				}));
+						   h.ContentLength == requestContent.Length
+				));
 			}
 			
 			[Test]
 			public void Should_call_deserialize_on_serializer_with_content_of_response()
 			{
-				serializer.Received().Deserialize<ResultStub>(Arg.Is<string>(s => {
-					return s == responseContent;
-				}));
+				serializer.Received().Deserialize<ResultStub>(Arg.Is<string>(s => s == responseContent));
 			}
 			
 			[Test]
@@ -304,22 +294,20 @@ namespace SineSignal.Ottoman.Specs.Http
 			[Test]
 			public void Should_call_send_on_http_client_with_generated_http_request()
 			{
-				httpClient.Received().Send(Arg.Is<HttpRequest>(h => {
-					return h.Url == new Uri(baseUri.ToString() + restRequest.Path) && 
+				httpClient.Received().Send(
+					Arg.Is<HttpRequest>(h => h.Url == new Uri(baseUri.ToString() + restRequest.Path) && 
 						   h.Accept == responseContentType && 
 						   h.Method == restRequest.Method && 
 						   h.ContentType == requestContentType && 
 						   h.Content == requestContent && 
-						   h.ContentLength == requestContent.Length;
-				}));
+						   h.ContentLength == requestContent.Length
+				));
 			}
 			
 			[Test]
 			public void Should_call_deserialize_on_serializer_with_content_of_response()
 			{
-				serializer.Received().Deserialize<ResultStub>(Arg.Is<string>(s => {
-					return s == responseContent;
-				}));
+				serializer.Received().Deserialize<ResultStub>(Arg.Is<string>(s => s == responseContent));
 			}
 			
 			[Test]
@@ -402,22 +390,20 @@ namespace SineSignal.Ottoman.Specs.Http
 		[Test]
 		public void Should_call_send_on_http_client_with_generated_http_request()
 		{
-			httpClient.Received().Send(Arg.Is<HttpRequest>(h => {
-				return h.Url == new Uri(baseUri.ToString() + restRequest.Path) && 
+			httpClient.Received().Send(
+				Arg.Is<HttpRequest>(h => h.Url == new Uri(baseUri.ToString() + restRequest.Path) && 
 					   h.Accept == responseContentType && 
 					   h.Method == restRequest.Method && 
 					   h.ContentType == requestContentType && 
 					   h.Content == requestContent && 
-					   h.ContentLength == requestContent.Length;
-			}));
+					   h.ContentLength == requestContent.Length
+			));
 		}
 		
 		[Test]
 		public void Should_not_call_deserialize_on_serializer_with_content_of_response()
 		{
-			serializer.DidNotReceive().Deserialize<ResultStub>(Arg.Is<string>(s => {
-				return s == responseContent;
-			}));
+			serializer.DidNotReceive().Deserialize<ResultStub>(Arg.Is<string>(s => s == responseContent));
 		}
 		
 		[Test]

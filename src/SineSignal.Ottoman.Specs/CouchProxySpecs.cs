@@ -131,11 +131,11 @@ namespace SineSignal.Ottoman.Specs
 			}
 		}
 		
-		[Ignore("Until we can figure out how to tell NSubstitute to throw an exception when Process is called")]
 		public class When_executing_a_command_that_causes_an_unexpected_response_by_rest_client : ConcernFor<CouchProxy>
 		{
 			private IRestClient restClient;
 			private ICouchCommand couchCommand;
+			private Exception expectedException;
 			
 			protected override void Given()
 			{
@@ -145,8 +145,14 @@ namespace SineSignal.Ottoman.Specs
 				couchCommand.Route.Returns("some/path");
 				couchCommand.Operation.Returns(HttpMethod.Get);
 				couchCommand.SuccessStatusCode.Returns(HttpStatusCode.OK);
+				couchCommand.When(c => c.HandleError(Arg.Any<string>(), Arg.Any<CommandErrorResult>(), Arg.Any<UnexpectedHttpResponseException>())).Do(e => {
+					throw new Exception("Command Exception");
+				});
 				
-				// TODO:  How to tell restClient to throw exception when Process gets called.
+				restClient.BaseUri.Returns(new Uri("http://127.0.0.1:5984"));
+				restClient.Process<ResultStub>(Arg.Any<RestRequest>(), Arg.Any<HttpStatusCode>()).Returns(e => { 
+					throw new UnexpectedHttpResponseException(HttpStatusCode.OK, new HttpResponse { Error = new Exception("Some exception message") });
+				});
 			}
 			
 			public override CouchProxy CreateSystemUnderTest()
@@ -156,7 +162,14 @@ namespace SineSignal.Ottoman.Specs
 			
 			protected override void When()
 			{
-				Sut.Execute<ResultStub>(couchCommand);
+				try
+				{
+					Sut.Execute<ResultStub>(couchCommand);
+				}
+				catch (Exception e)
+				{
+					expectedException = e;
+				}
 			}
 			
 			[Test]
@@ -174,7 +187,13 @@ namespace SineSignal.Ottoman.Specs
 			[Test]
 			public void Should_call_error_handler_on_couch_command()
 			{
-				// TODO: Make sure HandleError on CouchCommand is called
+				couchCommand.Received().HandleError(Arg.Any<string>(), Arg.Any<CommandErrorResult>(), Arg.Any<UnexpectedHttpResponseException>());
+			}
+			
+			[Test]
+			public void Should_receive_exception_from_handle_error()
+			{
+				Assert.That(expectedException.Message, Is.EqualTo("Command Exception"));
 			}
 		}
 	}

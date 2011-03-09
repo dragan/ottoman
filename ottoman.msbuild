@@ -1,0 +1,20 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+	<!-- Settings -->
+	
+	<PropertyGroup>
+        <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+        <TrackFileAccess>false</TrackFileAccess>
+    </PropertyGroup>
+    
+    <!-- Individiual targets -->
+
+    <Target Name="Clean">
+    	<MSBuild Projects="src/SineSignal.Ottoman.sln" Targets="Clean" Properties="Configuration=$(Configuration);TrackFileAccess=$(TrackFileAccess)"/>
+    </Target>
+	
+	<Target Name="Build">
+		<MSBuild Projects="src/SineSignal.Ottoman.sln" Targets="Build" Properties="Configuration=$(Configuration);TrackFileAccess=$(TrackFileAccess)"/>
+	</Target>
+	
+</Project>

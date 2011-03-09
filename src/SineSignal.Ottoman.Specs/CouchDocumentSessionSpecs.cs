@@ -245,12 +245,10 @@ namespace SineSignal.Ottoman.Specs
 			[Test]
 			public void Should_execute_bulk_docs_command_with_couch_proxy()
 			{
-				couchProxy.Received().Execute<BulkDocsResult[]>(Arg.Is<BulkDocsCommand>(c => {
-					var message = (BulkDocsMessage)c.Message;
-					return c.Route == couchDatabase.Name + "/_bulk_docs" && 
-						   c.Operation == HttpMethod.Post && 
-						   (message.NonAtomic == false && message.AllOrNothing == false && message.Docs.Length == 1);
-				}));
+				couchProxy.Received().Execute<BulkDocsResult[]>(Arg.Is<BulkDocsCommand>(c => c.Route == couchDatabase.Name + "/_bulk_docs" && 
+					c.Operation == HttpMethod.Post && 
+					(((BulkDocsMessage)c.Message).NonAtomic == false && ((BulkDocsMessage)c.Message).AllOrNothing == false && ((BulkDocsMessage)c.Message).Docs.Length == 1)
+				));
 			}
 		}
 		
@@ -302,12 +300,12 @@ namespace SineSignal.Ottoman.Specs
 			[Test]
 			public void Should_execute_get_document_command_with_couch_proxy()
 			{
-				couchProxy.Received().Execute<CouchDocument>(Arg.Is<GetDocumentCommand>(c => {
-					return c.Route == couchDatabase.Name + "/" + documentId.ToString() && 
+				couchProxy.Received().Execute<CouchDocument>(
+					Arg.Is<GetDocumentCommand>(c => c.Route == couchDatabase.Name + "/" + documentId.ToString() && 
 						   c.Operation == HttpMethod.Get && 
 						   c.Message == null && 
-						   c.SuccessStatusCode == HttpStatusCode.OK;
-				}));
+						   c.SuccessStatusCode == HttpStatusCode.OK
+				));
 			}
 			
 			[Test]
@@ -385,12 +383,10 @@ namespace SineSignal.Ottoman.Specs
 			[Test]
 			public void Should_execute_bulk_docs_command_with_couch_proxy()
 			{
-				couchProxy.Received().Execute<BulkDocsResult[]>(Arg.Is<BulkDocsCommand>(c => {
-					var message = (BulkDocsMessage)c.Message;
-					return c.Route == couchDatabase.Name + "/_bulk_docs" && 
-						   c.Operation == HttpMethod.Post && 
-						   (message.NonAtomic == false && message.AllOrNothing == false && message.Docs.Length == 1);
-				}));
+				couchProxy.Received().Execute<BulkDocsResult[]>(Arg.Is<BulkDocsCommand>(c => c.Route == couchDatabase.Name + "/_bulk_docs" && 
+					c.Operation == HttpMethod.Post && 
+					(((BulkDocsMessage)c.Message).NonAtomic == false && ((BulkDocsMessage)c.Message).AllOrNothing == false && ((BulkDocsMessage)c.Message).Docs.Length == 1)
+				));
 			}
 		}
 	}

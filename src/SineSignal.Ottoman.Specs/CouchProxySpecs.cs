@@ -58,13 +58,13 @@ namespace SineSignal.Ottoman.Specs
 			[Test]
 			public void Should_call_process_on_rest_client_with_generated_rest_request()
 			{
-				restClient.Received().Process<ResultStub>(Arg.Is<RestRequest>(r => {
-					return r.Path == "some/path" && 
-						   r.Method == HttpMethod.Post && 
-						   (r.Payload is Employee && r.Payload == entity1);
-				}), Arg.Is<HttpStatusCode>(h => {
-					return h == HttpStatusCode.Created;
-				}));
+				restClient.Received().Process<ResultStub>(
+					Arg.Is<RestRequest>(r => r.Path == "some/path" && 
+						r.Method == HttpMethod.Post && 
+						(r.Payload is Employee && r.Payload == entity1)
+					), 
+					HttpStatusCode.Created
+				);
 			}
 			
 			[Test]
@@ -115,13 +115,13 @@ namespace SineSignal.Ottoman.Specs
 			[Test]
 			public void Should_call_process_on_rest_client_with_generated_rest_request()
 			{
-				restClient.Received().Process<ResultStub>(Arg.Is<RestRequest>(r => {
-					return r.Path == "some/path" && 
-						   r.Method == HttpMethod.Get && 
-						   r.Payload == null;
-				}), Arg.Is<HttpStatusCode>(h => {
-					return h == HttpStatusCode.OK;
-				}));
+				restClient.Received().Process<ResultStub>(
+					Arg.Is<RestRequest>(r => r.Path == "some/path" && 
+						r.Method == HttpMethod.Get && 
+						r.Payload == null
+					), 
+					HttpStatusCode.OK
+				);
 			}
 			
 			[Test]
@@ -162,13 +162,13 @@ namespace SineSignal.Ottoman.Specs
 			[Test]
 			public void Should_call_process_on_rest_client_with_generated_rest_request()
 			{
-				restClient.Received().Process<ResultStub>(Arg.Is<RestRequest>(r => {
-					return r.Path == "some/path" && 
-						   r.Method == HttpMethod.Get && 
-						   r.Payload == null;
-				}), Arg.Is<HttpStatusCode>(h => {
-					return h == HttpStatusCode.OK;
-				}));
+				restClient.Received().Process<ResultStub>(
+					Arg.Is<RestRequest>(r => r.Path == "some/path" && 
+						r.Method == HttpMethod.Get && 
+						r.Payload == null
+					), 
+					HttpStatusCode.OK
+				);
 			}
 			
 			[Test]

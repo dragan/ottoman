@@ -54,13 +54,13 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="NSubstitute, Version=0.1.2.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\tools\nsubstitute\NSubstitute.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\tools\nunit\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="NSubstitute, Version=1.0.0.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\tools\nsubstitute\NSubstitute.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

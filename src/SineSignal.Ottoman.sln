@@ -7,6 +7,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SineSignal.Ottoman", "SineS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SineSignal.Ottoman.AcceptanceSpecs", "SineSignal.Ottoman.AcceptanceSpecs\SineSignal.Ottoman.AcceptanceSpecs.csproj", "{1BB84B40-3BA5-4AD0-8690-9851DDE36EC5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{48D74E77-FD87-4F4F-AD38-8CF4714834E2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{3C1BAA7D-D5DB-4048-8FCF-85AFE5450F77}"
+	ProjectSection(SolutionItems) = preProject
+		..\ottoman.msbuild = ..\ottoman.msbuild
+		..\build.bat = ..\build.bat
+		..\build.sh = ..\build.sh
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +34,9 @@ Global
 		{DFB82EC8-2D77-461A-92D6-B4024E8812FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFB82EC8-2D77-461A-92D6-B4024E8812FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFB82EC8-2D77-461A-92D6-B4024E8812FA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3C1BAA7D-D5DB-4048-8FCF-85AFE5450F77} = {48D74E77-FD87-4F4F-AD38-8CF4714834E2}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = SineSignal.Ottoman.Specs\SineSignal.Ottoman.Specs.csproj

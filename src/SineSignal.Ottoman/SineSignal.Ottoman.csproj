@@ -44,7 +44,6 @@
     <Compile Include="Commands\ICouchCommand.cs" />
     <Compile Include="ICouchDatabase.cs" />
     <Compile Include="ICouchDocumentSession.cs" />
-    <Compile Include="Commands\BulkDocsCommand.cs" />
     <Compile Include="Http\RestRequest.cs" />
     <Compile Include="Http\RestResponse.cs" />
     <Compile Include="Http\IRestClient.cs" />

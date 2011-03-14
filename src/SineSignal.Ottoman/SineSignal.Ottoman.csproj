@@ -76,6 +76,8 @@
     <Compile Include="Exceptions\CannotCreateDatabaseException.cs" />
     <Compile Include="Exceptions\CannotDeleteDatabaseException.cs" />
     <Compile Include="Commands\GetDocumentCommand.cs" />
+    <Compile Include="Commands\PutDocumentCommand.cs" />
+    <Compile Include="Extensions\ObjectExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -88,5 +90,6 @@
     <Folder Include="Commands\" />
     <Folder Include="Serialization\" />
     <Folder Include="Generators\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
 </Project>

@@ -97,6 +97,82 @@ namespace SineSignal.Ottoman.Specs
 				Assert.That(entity, Is.EqualTo(entity1));
 			}
 		}
+		
+		public class When_loading_an_entity_that_has_not_been_added_to_the_cache : ConcernFor<CouchDocumentSession>
+		{
+			private const string EmployeeName = "Bob";
+			private const string EmployeeLogin = "boblogin";
+			
+			Employee entity;
+			Guid employeeId;
+			private Type entityType;
+			PropertyInfo identityProperty;
+			ICouchDatabase couchDatabase;
+			private string databaseName;
+			private ICouchProxy couchProxy;
+			private ICouchDocumentConvention documentConvention;
+			
+			protected override void Given()
+			{
+				employeeId = Guid.NewGuid();
+				entityType = typeof(Employee);
+				identityProperty = entityType.GetProperty("Id");
+				
+				documentConvention = Fake<ICouchDocumentConvention>();
+				documentConvention.GetIdentityPropertyFor(entityType).Returns(identityProperty);
+				
+				var couchDocument = new CouchDocument();
+				couchDocument.Add("_id", employeeId.ToString());
+				couchDocument.Add("_rev", "1-" + employeeId.ToString());
+				couchDocument.Add("Type", entityType.Name);
+				couchDocument.Add("Name", EmployeeName);
+				couchDocument.Add("Login", EmployeeLogin);
+				
+				couchProxy = Fake<ICouchProxy>();
+				couchProxy.Execute<CouchDocument>(Arg.Any<GetDocumentCommand>()).Returns(couchDocument);
+				
+				couchDatabase = Fake<ICouchDatabase>();
+				databaseName = "ottoman-test-database";
+				couchDatabase.Name.Returns(databaseName);
+				couchDatabase.CouchProxy.Returns(couchProxy);
+				couchDatabase.CouchDocumentConvention.Returns(documentConvention);
+			}
+			
+			public override CouchDocumentSession CreateSystemUnderTest()
+			{
+				return new CouchDocumentSession(couchDatabase);
+			}
+			
+			protected override void When()
+			{
+				entity = Sut.Load<Employee>(employeeId);
+			}
+			
+			[Test]
+			public void Should_execute_get_document_command_with_couch_proxy()
+			{
+				couchProxy.Received().Execute<CouchDocument>(
+					Arg.Is<GetDocumentCommand>(c => c.Route == couchDatabase.Name + "/" + employeeId.ToString() && 
+						   c.Operation == HttpMethod.Get && 
+						   c.Message == null && 
+						   c.SuccessStatusCode == HttpStatusCode.OK
+				));
+			}
+			
+			[Test]
+			public void Should_call_get_identity_property()
+			{
+				documentConvention.Received().GetIdentityPropertyFor(entityType);
+			}
+			
+			[Test]
+			public void Should_return_specified_entity()
+			{
+				Assert.That(entity.Id, Is.EqualTo(employeeId));
+				Assert.That(entity.Name, Is.EqualTo(EmployeeName));
+				Assert.That(entity.Login, Is.EqualTo(EmployeeLogin));
+			}
+		}
 	}
 	
 	public class Employee

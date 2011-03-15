@@ -9,7 +9,7 @@ namespace SineSignal.Ottoman
 {
 	public class CouchDocumentSession : ICouchDocumentSession
 	{
-		private readonly Dictionary<string, object> sessionCache = new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase);
+		private readonly CouchDocumentSessionCache sessionCache = new CouchDocumentSessionCache();
 		
 		public ICouchDatabase CouchDatabase { get; private set; }
 		
@@ -41,19 +41,49 @@ namespace SineSignal.Ottoman
 			if (result.Stored)
 			{
 				identityProperty.SetValue(entity, id, null);
-				sessionCache[id.ToString()] = entity;
+				sessionCache.Store(entityType, id, entity);
 			}
 		}
 		
-		public T Load<T>(string id)
+		public T Load<T>(object id)
 		{
-			object existingEntity;
-			if (sessionCache.TryGetValue(id, out existingEntity))
+			Type entityType = typeof(T);
+			object entity = sessionCache.TryToFind(entityType, id);
+			
+			if (entity == null)
 			{
-				return (T)existingEntity;
+				CouchDocument couchDocument = CouchProxy.Execute<CouchDocument>(new GetDocumentCommand(CouchDatabase.Name, id.ToString()));
+				PropertyInfo identityProperty = CouchDocumentConvention.GetIdentityPropertyFor(entityType);
+				entity = couchDocument.HydrateEntity<T>(identityProperty);
+				sessionCache.Store(entityType, id, entity);
 			}
 			
-			return default(T);
+			return (T)entity;
+		}
+		
+		private class CouchDocumentSessionCache
+		{
+			private readonly Dictionary<Type, Dictionary<string, WeakReference>> cache = new Dictionary<Type, Dictionary<string, WeakReference>>();
+			
+			public object TryToFind(Type type, object id)
+			{
+				if (!cache.ContainsKey(type))
+					return null;
+				
+				string identifier = id.ToString();
+				if (!cache[type].ContainsKey(identifier))
+					return null;
+				
+				return cache[type][identifier].Target;
+			}
+			
+			public void Store(Type type, object id, object entity)
+			{
+				if (!cache.ContainsKey(type))
+					cache.Add(type, new Dictionary<string, WeakReference>());
+				
+				cache[type][id.ToString()] = new WeakReference(entity);
+			}
 		}
 	}
 }

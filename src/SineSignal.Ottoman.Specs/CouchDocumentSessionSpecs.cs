@@ -148,11 +148,16 @@ namespace SineSignal.Ottoman.Specs
 				entity = Sut.Load<Employee>(employeeId);
 			}
 			
+			private bool DoArgsMatch(GetDocumentCommand c)
+			{
+				return c.Route == couchDatabase.Name + "/" + employeeId.ToString() && c.Operation == HttpMethod.Get && c.Message == null && c.SuccessStatusCode == HttpStatusCode.OK;
+			}
+			
 			[Test]
 			public void Should_execute_get_document_command_with_couch_proxy()
 			{
 				couchProxy.Received().Execute<CouchDocument>(
-					Arg.Is<GetDocumentCommand>(c => c.Route == couchDatabase.Name + "/" + employeeId.ToString() && 
+					Arg.Is<GetDocumentCommand>(c => c.Route == couchDatabase.Name + "/" + employeeId && 
 						   c.Operation == HttpMethod.Get && 
 						   c.Message == null && 
 						   c.SuccessStatusCode == HttpStatusCode.OK
